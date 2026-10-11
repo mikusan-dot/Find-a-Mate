@@ -45,7 +45,7 @@ export const MATCHING = {
   MIN_AGE: 18,
   DEFAULT_LIMIT: 5,
   MAX_LIMIT: 10,
-  POOL_SIZE: 300,
+  POOL_SIZE: 500,
 };
 
 export const REQUIRED_FOR_COMPLETE = ['displayName', 'department', 'academicYear', 'age', 'gender', 'bio', 'interests', 'goals', 'personality', 'lifestyle', 'communication'];

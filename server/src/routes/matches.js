@@ -14,7 +14,7 @@ matchesRouter.use(['/matches', '/conversations'], requireAuth, requireVerifiedEm
 
 export async function loadMatch(id, uid, { requireActive = true } = {}) {
   const snap = await db().doc(`matches/${id}`).get();
-  if (!snap.exists || !snap.data().users.includes(uid)) throw new HttpError(404, 'Match not found', 'NOT_FOUND');
+  if (!snap.exists || !Array.isArray(snap.data().users) || !snap.data().users.includes(uid)) throw new HttpError(404, 'Match not found', 'NOT_FOUND');
   if (requireActive && !snap.data().active) throw new HttpError(410, 'This match is no longer active', 'MATCH_INACTIVE');
   return { id: snap.id, ...snap.data() };
 }
@@ -54,7 +54,7 @@ async function deactivate(m, uid) {
   const other = otherOf(m.users, uid);
   const batch = db().batch();
   batch.update(db().doc(`matches/${m.id}`), { active: false, endedAt: FieldValue.serverTimestamp(), endedBy: uid });
-  batch.set(db().doc(`conversations/${m.id}`), { active: false, typing: {}, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+  batch.update(db().doc(`conversations/${m.id}`), { active: false, typing: {}, updatedAt: FieldValue.serverTimestamp() });
   // Prevent either side from resurfacing in the other's discovery.
   batch.set(db().doc(`passes/${dirId(uid, other)}`), { from: uid, to: other, createdAt: FieldValue.serverTimestamp() });
   batch.set(db().doc(`passes/${dirId(other, uid)}`), { from: other, to: uid, createdAt: FieldValue.serverTimestamp() });

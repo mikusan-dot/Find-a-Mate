@@ -29,7 +29,7 @@ discoveryRouter.get(
 
     let q = db().collection('profiles').where('verified', '==', true).where('status', '==', 'ACTIVE');
     if (viewer.preferences?.university === 'SAME') q = q.where('universityId', '==', viewer.universityId);
-    const snap = await q.limit(MATCHING.POOL_SIZE).get();
+    const snap = await q.orderBy('updatedAt', 'desc').limit(MATCHING.POOL_SIZE).get(); // recently active first
     const pool = snap.docs.map((d) => ({ uid: d.id, ...d.data() }));
 
     const ranked = rankCandidates(viewer, pool, { blocked, seen }, weights, limit);

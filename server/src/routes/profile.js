@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db, FieldValue } from '../firebase.js';
+import { bucket, db, FieldValue } from '../firebase.js';
 import { asyncHandler, HttpError, parse, requireAuth, requireVerifiedEmail } from '../middleware/auth.js';
 import { notifPrefsSchema, privacySchema, profileSchema } from '../models/schemas.js';
 import { profileCompleteness } from '../services/matchingEngine.js';
@@ -7,6 +7,15 @@ import { getProfile, getUniversity, notify } from '../services/data.js';
 
 export const profileRouter = Router();
 profileRouter.use(['/me', '/profile', '/settings', '/security'], requireAuth);
+
+/** Delete every avatar of this user except the one currently in use (best effort). */
+async function pruneAvatars(uid, keepUrl) {
+  try {
+    const [files] = await bucket().getFiles({ prefix: `avatars/${uid}/` });
+    const keep = keepUrl ? decodeURIComponent(keepUrl) : '';
+    await Promise.all(files.filter((f) => !keep.includes(f.name)).map((f) => f.delete().catch(() => {})));
+  } catch { /* storage cleanup must never fail a profile save */ }
+}
 
 const PHOTO_HOSTS = ['firebasestorage.googleapis.com', 'storage.googleapis.com'];
 
@@ -48,6 +57,7 @@ profileRouter.put(
     const merged = { ...current, ...patch };
     const c = profileCompleteness(merged);
     await db().doc(`profiles/${req.user.uid}`).set({ ...patch, onboardingComplete: c.onboardingComplete, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    if ('photoURL' in patch) await pruneAvatars(req.user.uid, patch.photoURL);
     res.json({ profile: { ...merged, onboardingComplete: c.onboardingComplete }, completeness: c });
   }),
 );

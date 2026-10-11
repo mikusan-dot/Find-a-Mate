@@ -75,6 +75,7 @@ function Basics({ value: d, set, university }) {
         <Avatar src={d.photoURL} name={d.displayName || '?'} size={72} />
         <div>
           <Button type="button" variant="secondary" size="sm" loading={uploading} onClick={() => fileRef.current?.click()}><Camera size={16} /> {d.photoURL ? 'Change photo' : 'Add photo'}</Button>
+          {d.photoURL && <Button type="button" variant="ghost" size="sm" className="ml-2" onClick={() => set({ photoURL: null })}>Remove</Button>}
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={pick} />
           <p className="mt-1.5 text-xs text-slate-400">Optional. Only shown to people your privacy settings allow.</p>
         </div>
@@ -207,7 +208,6 @@ export const SECTIONS = [
 const pickKeys = (d, keys) => Object.fromEntries(keys.map((k) => [k, d[k]]));
 export const payloadFor = (d, keys) => {
   const out = pickKeys(d, keys);
-  if ('photoURL' in out && !out.photoURL) delete out.photoURL; // null not sent; photo is optional
   return out;
 };
 

@@ -16,10 +16,12 @@ safetyRouter.post(
     const target = await db().doc(`users/${them}`).get();
     if (!target.exists) throw new HttpError(404, 'User not found', 'NOT_FOUND');
     const id = pairId(me, them);
+    const [matchSnap, convSnap] = await Promise.all([db().doc(`matches/${id}`).get(), db().doc(`conversations/${id}`).get()]);
     const batch = db().batch();
     batch.set(db().doc(`blocks/${dirId(me, them)}`), { blocker: me, blocked: them, createdAt: FieldValue.serverTimestamp() });
-    batch.set(db().doc(`matches/${id}`), { active: false, endedAt: FieldValue.serverTimestamp(), endedBy: me }, { merge: true });
-    batch.set(db().doc(`conversations/${id}`), { active: false, typing: {}, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    // Only touch documents that exist; merging into a missing doc would create a stub without users/participants.
+    if (matchSnap.exists) batch.update(matchSnap.ref, { active: false, endedAt: FieldValue.serverTimestamp(), endedBy: me });
+    if (convSnap.exists) batch.update(convSnap.ref, { active: false, typing: {}, updatedAt: FieldValue.serverTimestamp() });
     batch.delete(db().doc(`likes/${dirId(me, them)}`));
     batch.delete(db().doc(`likes/${dirId(them, me)}`));
     batch.set(db().doc(`passes/${dirId(me, them)}`), { from: me, to: them, createdAt: FieldValue.serverTimestamp() });

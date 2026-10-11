@@ -121,7 +121,7 @@ async function suspendUser(actor, uid, reason) {
   const matches = await db().collection('matches').where('users', 'array-contains', uid).where('active', '==', true).get();
   matches.docs.forEach((m) => {
     batch.update(m.ref, { active: false, endedAt: FieldValue.serverTimestamp(), endedBy: 'MODERATION' });
-    batch.set(db().doc(`conversations/${m.id}`), { active: false, typing: {} }, { merge: true });
+    batch.update(db().doc(`conversations/${m.id}`), { active: false, typing: {} });
   });
   await batch.commit();
   await logAdmin(actor, 'SUSPEND_USER', uid, { reason });
