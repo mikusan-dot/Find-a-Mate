@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { pathToFileURL } from 'node:url';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -40,7 +41,7 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Something went wrong', code: 'INTERNAL' });
 });
 
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const port = Number(process.env.PORT) || 4000;
   app.listen(port, () => console.log(`MindMesh API listening on :${port}`));
 }

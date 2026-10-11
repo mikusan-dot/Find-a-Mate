@@ -50,16 +50,11 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Reports: any signed-in user can file one for someone else; only staff can read.
+    // Reports: created only through the API (rate limiting, optional evidence, university tagging).
+    // Only staff can read them directly.
     match /reports/{id} {
-      allow create: if verified()
-        && request.resource.data.reporter == request.auth.uid
-        && request.resource.data.reported != request.auth.uid
-        && request.resource.data.category in ['HARASSMENT','SPAM','FAKE_PROFILE','INAPPROPRIATE','THREATS','SCAMS','OTHER']
-        && request.resource.data.status == 'OPEN'
-        && request.resource.data.keys().hasOnly(['reporter','reported','category','details','conversationId','status','createdAt']);
       allow read: if isStaff();
-      allow update, delete: if false;
+      allow create, update, delete: if false;
     }
 
     // ---------- matches / chat ----------

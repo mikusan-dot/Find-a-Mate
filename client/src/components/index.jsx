@@ -452,8 +452,19 @@ export function RequireAuth() {
   if (booting) return <FullPageSpinner />;
   if (!fbUser) return <Navigate to="/login" replace state={{ from: loc.pathname }} />;
   if (!me) return <div className="grid min-h-screen place-items-center p-6">{meError ? <ErrorState error={meError} onRetry={loadMe} title="Can't reach MindMesh" /> : <Spinner className="h-8 w-8" />}</div>;
-  if (me.user?.status === 'SUSPENDED') return <Navigate to="/login" replace />;
+  if (me.user?.status === 'SUSPENDED') return <SuspendedNotice />;
   return <Outlet />;
+}
+
+/** Shown to a suspended account: sign out once (avoids a /login <-> /dashboard redirect loop). */
+function SuspendedNotice() {
+  const { logout } = useAuth();
+  useEffect(() => { logout().catch(() => {}); }, [logout]);
+  return (
+    <div className="grid min-h-screen place-items-center p-6">
+      <ErrorState title="Account suspended" error={{ message: 'This account has been suspended by a moderator. Contact your university administrator if you think this is a mistake.' }} onRetry={() => { window.location.href = '/login'; }} />
+    </div>
+  );
 }
 
 /** Requires a verified university email. */
