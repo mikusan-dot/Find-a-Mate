@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() { return request.auth != null; }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+    function role() { return signedIn() && 'role' in request.auth.token ? request.auth.token.role : null; }
+    function isStaff() { return role() in ['SUPER_ADMIN', 'MODERATOR', 'UNIVERSITY_ADMIN']; }
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+    function conv(id) { return get(/databases/$(database)/documents/conversations/$(id)).data; }
+    function inConv(id) { return signedIn() && request.auth.uid in conv(id).participants; }
+    function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
+
+    // Default: deny everything. All sensitive writes go through the Admin SDK (server).
+    match /{document=**} { allow read, write: if false; }
+
+    // ---------- account + profile ----------
+    // Private account doc. Owner may read; only the server writes.
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+      allow write: if false;
+    }
+
+    // Profiles are read by their owner only. Other people's profiles are served by the
+    // API after hard filters + per-field privacy are applied server-side.
+    match /profiles/{uid} {
+      allow read: if isSelf(uid);
+      allow write: if false;
+    }
+
+    // Public config (university registry, matching weights are server-only).
+    match /universities/{id} {
+      allow read: if true;   // needed on the register screen (registry holds no secrets)
+      allow write: if false;
+    }
+
+    // Never readable by clients.
+    match /studentIds/{id} { allow read, write: if false; }
+    match /adminLogs/{id}  { allow read, write: if false; }
+    match /config/{id}     { allow read, write: if false; }
+    match /passes/{id}     { allow read, write: if false; }
+    match /likes/{id}      { allow read, write: if false; }
+    match /compatibilityResults/{id} { allow read, write: if false; }  // may hold viewer-specific text; API only
+    match /labs/{id}       { allow read, write: if false; }
+
+    // Blocks: owner can see who they blocked; creation goes through the API.
+    match /blocks/{id} {
+      allow read: if signedIn() && resource.data.blocker == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Reports: any signed-in user can file one for someone else; only staff can read.
+    match /reports/{id} {
+      allow create: if verified()
+        && request.resource.data.reporter == request.auth.uid
+        && request.resource.data.reported != request.auth.uid
+        && request.resource.data.category in ['HARASSMENT','SPAM','FAKE_PROFILE','INAPPROPRIATE','THREATS','SCAMS','OTHER']
+        && request.resource.data.status == 'OPEN'
+        && request.resource.data.keys().hasOnly(['reporter','reported','category','details','conversationId','status','createdAt']);
+      allow read: if isStaff();
+      allow update, delete: if false;
+    }
+
+    // ---------- matches / chat ----------
+    match /matches/{id} {
+      allow read: if signedIn() && request.auth.uid in resource.data.users;
+      allow write: if false;
+    }
+
+    match /conversations/{convId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.participants;
+      // Participants may only toggle their own typing flag, and only while the match is active.
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.participants
+        && resource.data.active == true
+        && onlyChanges(['typing']);
+      allow create, delete: if false;
+    }
+
+    match /messages/{convId}/items/{msgId} {
+      // History is readable only while the match is active (unmatch/block cut access immediately).
+      allow read: if inConv(convId) && conv(convId).active == true;
+
+      allow create: if verified() && inConv(convId)
+        && conv(convId).active == true
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.conversationId == convId
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.deleted == false
+        && request.resource.data.readBy == [request.auth.uid]
+        && request.resource.data.keys().hasOnly(['conversationId','senderId','text','createdAt','deleted','readBy']);
+
+      // Recipient marks as read; sender may soft-delete their own message.
+      allow update: if inConv(convId)
+        && ( (resource.data.senderId != request.auth.uid && onlyChanges(['readBy'])
+              && request.resource.data.readBy.hasAll(resource.data.readBy))
+          || (resource.data.senderId == request.auth.uid && onlyChanges(['deleted','text'])
+              && request.resource.data.deleted == true && request.resource.data.text == '') );
+
+      allow delete: if false;
+    }
+
+    // ---------- notifications ----------
+    match /notifications/{id} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow update: if signedIn() && resource.data.uid == request.auth.uid && onlyChanges(['read']);
+      allow create, delete: if false;
+    }
+  }
+}
