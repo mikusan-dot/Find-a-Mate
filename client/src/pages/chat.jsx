@@ -18,16 +18,16 @@ export function Chat() {
   return (
     <div className="-mx-4 grid h-[calc(100dvh-8.5rem)] md:mx-0 md:h-[calc(100dvh-7rem)] md:grid-cols-[18rem_1fr] md:gap-4">
       <aside className={cn('overflow-y-auto md:block', matchId && 'hidden')}>
-        <h1 className="mb-3 px-4 text-2xl font-semibold text-white md:px-0">Messages</h1>
+        <h1 className="mb-3 px-4 text-2xl font-semibold text-fg md:px-0">Messages</h1>
         {q.loading ? <div className="space-y-2 px-4 md:px-0">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-16" />)}</div> : q.error ? <ErrorState error={q.error} onRetry={q.reload} /> : q.data.matches.length === 0 ? (
           <div className="px-4 md:px-0"><EmptyState icon={MessageCircle} title="No conversations yet" action={<Button as={Link} to="/discover" size="sm">Find connections</Button>}>Chat opens after a mutual match.</EmptyState></div>
         ) : (
           <ul className="space-y-1 px-2 md:px-0">
             {q.data.matches.map((m) => (
               <li key={m.matchId}>
-                <Link to={`/chat/${m.matchId}`} className={cn('flex items-center gap-3 rounded-xl p-3 transition hover:bg-white/5', matchId === m.matchId && 'bg-brand-500/10')}>
+                <Link to={`/chat/${m.matchId}`} className={cn('flex items-center gap-3 rounded-xl p-3 transition hover:bg-sunk', matchId === m.matchId && 'bg-accent-soft')}>
                   <Avatar src={m.photoURL} name={m.displayName} />
-                  <span className="min-w-0 flex-1"><span className="block truncate font-medium text-white">{m.displayName}</span><span className="block truncate text-xs text-slate-400">{m.department || 'Tap to chat'}</span></span>
+                  <span className="min-w-0 flex-1"><span className="block truncate font-medium text-fg">{m.displayName}</span><span className="block truncate text-xs text-fg-3">{m.department || 'Tap to chat'}</span></span>
                   {unreadByMatch?.[m.matchId] ? <Badge tone="brand">{unreadByMatch[m.matchId]}</Badge> : null}
                 </Link>
               </li>
@@ -36,7 +36,7 @@ export function Chat() {
         )}
       </aside>
       <section className={cn('min-h-0', !matchId && 'hidden md:grid md:place-items-center')}>
-        {matchId ? <Conversation key={matchId} matchId={matchId} /> : <p className="text-sm text-slate-500">Select a conversation</p>}
+        {matchId ? <Conversation key={matchId} matchId={matchId} /> : <p className="text-sm text-fg-3">Select a conversation</p>}
       </section>
     </div>
   );
@@ -122,20 +122,20 @@ function Conversation({ matchId }) {
 
   let lastDay = '';
   return (
-    <div className="flex h-full min-h-0 flex-col md:rounded-2xl md:border md:border-line md:bg-ink-900/50">
+    <div className="flex h-full min-h-0 flex-col md:rounded-xl md:border md:border-line md:bg-card">
       <header className="flex items-center gap-3 border-b border-line px-3 py-3">
-        <Link to="/chat" className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10 md:hidden" aria-label="Back"><ArrowLeft size={20} /></Link>
+        <Link to="/chat" className="rounded-lg p-1.5 text-fg-2 hover:bg-sunk md:hidden" aria-label="Back"><ArrowLeft size={20} /></Link>
         <button className="flex flex-1 items-center gap-3 text-left" onClick={() => setModal('profile')}>
           <Avatar src={match.photoURL} name={match.displayName} size={40} />
-          <span><span className="block font-medium text-white">{match.displayName}</span><span className="block text-xs text-slate-400">{otherTyping ? 'typing…' : 'Verified Student'}</span></span>
+          <span><span className="block font-medium text-fg">{match.displayName}</span><span className="block text-xs text-fg-3">{otherTyping ? 'typing…' : 'Verified Student'}</span></span>
         </button>
         <Button variant="ghost" size="sm" onClick={() => setModal('icebreakers')} aria-label="Icebreakers" disabled={!active}><Sparkles size={16} /></Button>
         <Button variant="ghost" size="sm" onClick={() => setModal('menu')} aria-label="More options"><MoreVertical size={18} /></Button>
       </header>
 
       <div className="flex-1 space-y-1.5 overflow-y-auto px-3 py-4" aria-live="polite">
-        {msgs.length >= count && <div className="text-center"><button className="text-xs text-brand-300 hover:underline" onClick={() => setCount(count + 50)}>Load earlier messages</button></div>}
-        {msgs.length === 0 && <p className="py-10 text-center text-sm text-slate-500">Say hi 👋 or tap ✨ for a conversation starter.</p>}
+        {msgs.length >= count && <div className="text-center"><button className="text-xs text-accent-ink hover:underline" onClick={() => setCount(count + 50)}>Load earlier messages</button></div>}
+        {msgs.length === 0 && <p className="py-10 text-center text-sm text-fg-3">Say hi 👋 or tap ✨ for a conversation starter.</p>}
         {msgs.map((m) => {
           const mine = m.senderId === uid;
           const ms = m.createdAt?.toMillis?.() ?? Date.now();
@@ -145,12 +145,12 @@ function Conversation({ matchId }) {
           const read = (m.readBy || []).some((u) => u !== m.senderId);
           return (
             <div key={m.id}>
-              {header && <p className="my-3 text-center text-[11px] text-slate-500">{header}</p>}
+              {header && <p className="my-3 text-center text-[11px] text-fg-3">{header}</p>}
               <div className={cn('group flex items-end gap-1.5', mine ? 'justify-end' : 'justify-start')}>
-                {mine && !m.deleted && <button onClick={() => removeMsg(m)} aria-label="Delete message" className="rounded p-1 text-slate-600 opacity-0 transition hover:text-red-300 focus:opacity-100 group-hover:opacity-100"><Trash2 size={13} /></button>}
-                <div className={cn('max-w-[78%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm', mine ? 'brand-gradient rounded-br-md text-white' : 'rounded-bl-md bg-ink-700 text-slate-100', m.deleted && 'italic opacity-60')}>
+                {mine && !m.deleted && <button onClick={() => removeMsg(m)} aria-label="Delete message" className="rounded p-1 text-fg-3 opacity-0 transition hover:text-bad focus:opacity-100 group-hover:opacity-100"><Trash2 size={13} /></button>}
+                <div className={cn('max-w-[78%] whitespace-pre-wrap break-words rounded-xl px-3.5 py-2 text-sm', mine ? 'bg-accent rounded-br-md text-fg' : 'rounded-bl-md bg-sunk text-fg', m.deleted && 'italic opacity-60')}>
                   {m.deleted ? 'Message deleted' : m.text}
-                  <span className={cn('ml-2 inline-flex items-center gap-1 align-bottom text-[10px]', mine ? 'text-white/70' : 'text-slate-400')}>{fmt(ms)}{mine && !m.deleted && (read ? <CheckCheck size={12} aria-label="Read" /> : <Check size={12} aria-label="Sent" />)}</span>
+                  <span className={cn('ml-2 inline-flex items-center gap-1 align-bottom text-[10px]', mine ? 'text-accent-fg/70' : 'text-fg-3')}>{fmt(ms)}{mine && !m.deleted && (read ? <CheckCheck size={12} aria-label="Read" /> : <Check size={12} aria-label="Sent" />)}</span>
                 </div>
               </div>
             </div>
@@ -161,7 +161,7 @@ function Conversation({ matchId }) {
 
       {active ? (
         <form onSubmit={send} className="safe-bottom relative border-t border-line p-3">
-          {emojiOpen && <div className="glass absolute bottom-full left-3 mb-2 grid grid-cols-8 gap-1 rounded-2xl p-2">{EMOJIS.map((e) => <button type="button" key={e} className="rounded-lg p-1.5 text-xl hover:bg-white/10" onClick={() => setText((t) => t + e)}>{e}</button>)}</div>}
+          {emojiOpen && <div className="bg-card border border-line absolute bottom-full left-3 mb-2 grid grid-cols-8 gap-1 rounded-xl p-2">{EMOJIS.map((e) => <button type="button" key={e} className="rounded-lg p-1.5 text-xl hover:bg-sunk" onClick={() => setText((t) => t + e)}>{e}</button>)}</div>}
           <div className="flex items-end gap-2">
             <Button type="button" variant="ghost" size="sm" onClick={() => setEmojiOpen((o) => !o)} aria-label="Emoji" aria-expanded={emojiOpen}><Smile size={20} /></Button>
             <Textarea rows={1} value={text} maxLength={2000} placeholder="Write a message…" aria-label="Message" className="max-h-32 min-h-10 flex-1 py-2.5" onChange={(e) => onType(e.target.value)}
@@ -170,13 +170,13 @@ function Conversation({ matchId }) {
           </div>
         </form>
       ) : (
-        <p className="border-t border-line p-4 text-center text-sm text-slate-400">This conversation has ended.</p>
+        <p className="border-t border-line p-4 text-center text-sm text-fg-3">This conversation has ended.</p>
       )}
 
       <Modal open={modal === 'menu'} onClose={() => setModal(null)} title="Conversation">
         <div className="space-y-1">
-          {[['report', Flag, 'Report', 'text-slate-200'], ['unmatch', UserX, 'Unmatch', 'text-slate-200'], ['delete', Trash2, 'Delete conversation', 'text-slate-200'], ['block', Ban, 'Block', 'text-red-300']].map(([k, Icon, label, c]) => (
-            <button key={k} onClick={() => setModal(k)} className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm hover:bg-white/5', c)}><Icon size={17} /> {label}</button>
+          {[['report', Flag, 'Report', 'text-fg'], ['unmatch', UserX, 'Unmatch', 'text-fg'], ['delete', Trash2, 'Delete conversation', 'text-fg'], ['block', Ban, 'Block', 'text-bad']].map(([k, Icon, label, c]) => (
+            <button key={k} onClick={() => setModal(k)} className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm hover:bg-sunk', c)}><Icon size={17} /> {label}</button>
           ))}
         </div>
       </Modal>
@@ -206,9 +206,9 @@ export function ReportModal({ open, onClose, reportedUid, withEvidence = true })
   return (
     <Modal open={open} onClose={onClose} title="Report this person">
       <div className="space-y-4">
-        <Field label="What's the problem?"><div className="flex flex-wrap gap-2" role="radiogroup">{REPORT_CATEGORIES.map(([id, label]) => <button key={id} type="button" role="radio" aria-checked={category === id} onClick={() => setCategory(id)} className={cn('rounded-full border px-3 py-1.5 text-sm', category === id ? 'border-brand-400 bg-brand-500/15 text-brand-300' : 'border-line text-slate-300 hover:bg-white/5')}>{label}</button>)}</div></Field>
+        <Field label="What's the problem?"><div className="flex flex-wrap gap-2" role="radiogroup">{REPORT_CATEGORIES.map(([id, label]) => <button key={id} type="button" role="radio" aria-checked={category === id} onClick={() => setCategory(id)} className={cn('rounded-full border px-3 py-1.5 text-sm', category === id ? 'border-accent bg-accent-soft text-accent-ink' : 'border-line text-fg-2 hover:bg-sunk')}>{label}</button>)}</div></Field>
         <Field label="Details (optional)" htmlFor="rd"><Textarea id="rd" maxLength={1000} value={details} onChange={(e) => setDetails(e.target.value)} /></Field>
-        {withEvidence && <label className="flex items-start gap-3 text-sm text-slate-300"><input type="checkbox" className="mt-1 h-4 w-4 accent-brand-500" checked={evidence} onChange={(e) => setEvidence(e.target.checked)} /><span>Share the last 10 messages of this conversation with moderators. Otherwise they can't see any messages.</span></label>}
+        {withEvidence && <label className="flex items-start gap-3 text-sm text-fg-2"><input type="checkbox" className="mt-1 h-4 w-4 accent-accent" checked={evidence} onChange={(e) => setEvidence(e.target.checked)} /><span>Share the last 10 messages of this conversation with moderators. Otherwise they can't see any messages.</span></label>}
       </div>
       <div className="mt-6 flex justify-end gap-2"><Button variant="ghost" onClick={onClose}>Cancel</Button><Button loading={busy} disabled={!category} onClick={submit}>Submit report</Button></div>
     </Modal>

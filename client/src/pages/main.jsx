@@ -15,7 +15,7 @@ export function Breakdown({ breakdown }) {
     <div className="space-y-2">
       {Object.entries(breakdown).filter(([k]) => k !== 'preferences').map(([k, v]) => (
         <div key={k}>
-          <div className="mb-1 flex justify-between text-xs text-slate-400"><span>{BREAKDOWN_LABELS[k]}</span><span>{v}%</span></div>
+          <div className="mb-1 flex justify-between text-xs text-fg-3"><span>{BREAKDOWN_LABELS[k]}</span><span>{v}%</span></div>
           <ProgressBar value={v} className="h-1.5" />
         </div>
       ))}
@@ -27,11 +27,11 @@ export function WhyMatch({ rec }) {
   return (
     <div className="space-y-4 text-sm">
       <div>
-        <h4 className="mb-1.5 font-medium text-white">Why you might connect</h4>
-        <ul className="space-y-1.5 text-slate-300">{rec.explanation.bullets.map((b) => <li key={b} className="flex gap-2"><Sparkles size={14} className="mt-1 shrink-0 text-brand-300" />{b}</li>)}</ul>
+        <h4 className="mb-1.5 font-medium text-fg">Why you might connect</h4>
+        <ul className="space-y-1.5 text-fg-2">{rec.explanation.bullets.map((b) => <li key={b} className="flex gap-2"><Sparkles size={14} className="mt-1 shrink-0 text-accent-ink" />{b}</li>)}</ul>
       </div>
       <Breakdown breakdown={rec.breakdown} />
-      <p className="text-xs text-slate-500">A friendly guide based on what you both shared, not a promise. {rec.explanation.source === 'ai' ? 'Wording written with AI help.' : ''}</p>
+      <p className="text-xs text-fg-3">A friendly guide based on what you both shared, not a promise. {rec.explanation.source === 'ai' ? 'Wording written with AI help.' : ''}</p>
     </div>
   );
 }
@@ -40,8 +40,8 @@ function ProfileMeta({ rec }) {
   const bits = [rec.department, rec.academicYear ? `${ordinal(rec.academicYear)} Year` : null, rec.age ? `${rec.age}` : null].filter(Boolean);
   return (
     <div className="min-w-0">
-      <p className="truncate text-lg font-semibold text-white">{rec.displayName}</p>
-      <p className="text-sm text-slate-400">{bits.length ? bits.join(' · ') : 'Details hidden by this person'}</p>
+      <p className="truncate text-lg font-semibold text-fg">{rec.displayName}</p>
+      <p className="text-sm text-fg-3">{bits.length ? bits.join(' · ') : 'Details hidden by this person'}</p>
       <VerifiedBadge university={rec.university?.shortName} />
     </div>
   );
@@ -55,11 +55,11 @@ export function ProfileDetail({ rec }) {
         <div className="flex-1"><ProfileMeta rec={rec} /></div>
         <ScoreRing value={rec.score} />
       </div>
-      {rec.bio && <p className="text-sm text-slate-300">{rec.bio}</p>}
+      {rec.bio && <p className="text-sm text-fg-2">{rec.bio}</p>}
       <div className="flex flex-wrap gap-2">{rec.goals.map((g) => <Chip key={g}>{goalEmoji(g)} {goalLabel(g)}</Chip>)}</div>
       {rec.interests.length > 0 && <div className="flex flex-wrap gap-2">{rec.interests.map((i) => <Chip key={i}>{interestEmoji(i)} {i}</Chip>)}</div>}
       <WhyMatch rec={rec} />
-      {rec.hidden.length > 0 && <p className="text-xs text-slate-500">Hidden by this person's privacy settings: {rec.hidden.join(', ')}.</p>}
+      {rec.hidden.length > 0 && <p className="text-xs text-fg-3">Hidden by this person's privacy settings: {rec.hidden.join(', ')}.</p>}
     </div>
   );
 }
@@ -70,12 +70,12 @@ export function RecommendationCard({ rec, onInterested, onPass, onView, rank }) 
   const [open, setOpen] = useState(false);
   return (
     <motion.div layout initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }}>
-      <Card glass className="space-y-4">
+      <Card className="space-y-4">
         <div className="flex items-start gap-4">
-          {rank && <span className="hidden text-sm font-semibold text-slate-500 sm:block">#{rank}</span>}
+          {rank && <span className="hidden text-sm font-semibold text-fg-3 sm:block">#{rank}</span>}
           <Avatar src={rec.photoURL} name={rec.displayName} size={56} />
           <div className="flex-1"><ProfileMeta rec={rec} /></div>
-          <div className="text-center"><ScoreRing value={rec.score} /><p className="mt-1 text-[11px] text-slate-400">Compatible</p></div>
+          <div className="text-center"><ScoreRing value={rec.score} /><p className="mt-1 text-[11px] text-fg-3">Compatible</p></div>
         </div>
         <div className="flex flex-wrap gap-2">
           {rec.interests.slice(0, 5).map((i) => <Chip key={i}>{interestEmoji(i)} {i}</Chip>)}
@@ -83,7 +83,7 @@ export function RecommendationCard({ rec, onInterested, onPass, onView, rank }) 
         </div>
         <div className="flex flex-wrap gap-1.5">{rec.goals.map((g) => <Badge key={g} tone="brand">{goalEmoji(g)} {goalLabel(g)}</Badge>)}</div>
 
-        <button onClick={() => setOpen((o) => !o)} className="text-sm text-brand-300 hover:underline" aria-expanded={open}>{open ? 'Hide' : 'Why this match?'}</button>
+        <button onClick={() => setOpen((o) => !o)} className="text-sm text-accent-ink hover:underline" aria-expanded={open}>{open ? 'Hide' : 'Why this match?'}</button>
         <AnimatePresence initial={false}>
           {open && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><WhyMatch rec={rec} /></motion.div>}
         </AnimatePresence>
@@ -142,21 +142,21 @@ export function Dashboard() {
       <PageHeader title={`${greet}, ${firstName} 👋`} subtitle={`${me.university?.name ?? ''} · Verified Student`} />
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="md:col-span-1">
-          <p className="text-sm text-slate-400">Profile completeness</p>
-          <p className="mt-1 text-3xl font-semibold text-white">{c.percent}%</p>
+          <p className="text-sm text-fg-3">Profile completeness</p>
+          <p className="mt-1 text-3xl font-semibold text-fg">{c.percent}%</p>
           <ProgressBar value={c.percent} className="mt-3" />
           {c.missing.length > 0 && (
-            <><p className="mt-3 text-xs text-slate-400">Missing: {c.missing.slice(0, 3).join(', ')}{c.missing.length > 3 ? '…' : ''}</p>
+            <><p className="mt-3 text-xs text-fg-3">Missing: {c.missing.slice(0, 3).join(', ')}{c.missing.length > 3 ? '…' : ''}</p>
             <Button as={Link} to="/profile/edit" variant="secondary" size="sm" className="mt-3">Complete Profile</Button></>
           )}
         </Card>
         {stats.map(({ label, value, icon: Icon, to }) => (
-          <Link key={label} to={to}><Card className="h-full transition hover:bg-ink-700"><Icon size={18} className="text-brand-300" /><p className="mt-3 text-3xl font-semibold text-white">{value}</p><p className="text-sm text-slate-400">{label}</p></Card></Link>
+          <Link key={label} to={to}><Card className="h-full transition hover:bg-sunk"><Icon size={18} className="text-accent-ink" /><p className="mt-3 text-3xl font-semibold text-fg">{value}</p><p className="text-sm text-fg-3">{label}</p></Card></Link>
         ))}
       </div>
 
       <section>
-        <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold text-white">People you may connect with</h2><Link to="/discover" className="text-sm text-brand-300 hover:underline">See all</Link></div>
+        <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold text-fg">People you may connect with</h2><Link to="/discover" className="text-sm text-accent-ink hover:underline">See all</Link></div>
         {d.loading ? <CardSkeletons n={2} /> : d.error ? <ErrorState error={d.error} onRetry={d.reload} /> : d.data.recommendations.length === 0 ? (
           <EmptyState icon={Compass} title="No new recommendations right now">We only show people who match your preferences and goals. Check back soon, or widen your preferences.</EmptyState>
         ) : (
@@ -223,13 +223,13 @@ export function Matches() {
   const { unreadByMatch } = useNotifications();
   return (
     <div {...bind}>
-      <PageHeader title="Matches" subtitle="People who are interested in you too." action={pulling ? <RefreshCw className="animate-spin text-brand-300" size={18} /> : null} />
+      <PageHeader title="Matches" subtitle="People who are interested in you too." action={pulling ? <RefreshCw className="animate-spin text-accent-ink" size={18} /> : null} />
       {q.loading ? <CardSkeletons n={2} /> : q.error ? <ErrorState error={q.error} onRetry={q.reload} /> : q.data.matches.length === 0 ? (
         <EmptyState icon={Heart} title="No matches yet" action={<Button as={Link} to="/discover">Browse today's connections</Button>}>When you and someone else both choose “Interested”, they'll show up here and chat unlocks.</EmptyState>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {q.data.matches.map((m) => (
-            <Card key={m.matchId} glass className="space-y-3">
+            <Card key={m.matchId} bg-card border border-line className="space-y-3">
               <div className="flex items-center gap-4"><Avatar src={m.photoURL} name={m.displayName} size={56} /><div className="flex-1"><ProfileMeta rec={m} /></div><ScoreRing value={m.score} size={56} /></div>
               <div className="flex flex-wrap gap-2">
                 <Button as={Link} to={`/chat/${m.matchId}`} size="sm"><MessageCircle size={15} /> Message{unreadByMatch?.[m.matchId] ? ` (${unreadByMatch[m.matchId]})` : ''}</Button>
@@ -254,7 +254,7 @@ function MatchPicker({ base }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       {q.data.matches.map((m) => (
-        <Link key={m.matchId} to={`${base}/${m.matchId}`}><Card className="flex items-center gap-3 transition hover:bg-ink-700"><Avatar src={m.photoURL} name={m.displayName} /><div><p className="font-medium text-white">{m.displayName}</p><p className="text-xs text-slate-400">{m.department}</p></div></Card></Link>
+        <Link key={m.matchId} to={`${base}/${m.matchId}`}><Card className="flex items-center gap-3 transition hover:bg-sunk"><Avatar src={m.photoURL} name={m.displayName} /><div><p className="font-medium text-fg">{m.displayName}</p><p className="text-xs text-fg-3">{m.department}</p></div></Card></Link>
       ))}
     </div>
   );
@@ -287,9 +287,9 @@ function LabSession({ matchId }) {
     return s.results ? (
       <div className="grid gap-4 sm:grid-cols-3">
         {[['Communication', s.results.communication], ['Lifestyle', s.results.lifestyle], ['Overall vibe', s.results.overall]].map(([label, v]) => (
-          <Card key={label} glass className="flex flex-col items-center gap-3 text-center"><ScoreRing value={v ?? 0} size={80} /><p className="font-medium text-white">{label} Compatibility</p></Card>
+          <Card key={label} bg-card border border-line className="flex flex-col items-center gap-3 text-center"><ScoreRing value={v ?? 0} size={80} /><p className="font-medium text-fg">{label} Compatibility</p></Card>
         ))}
-        <p className="text-xs text-slate-500 sm:col-span-3">{s.disclaimer}</p>
+        <p className="text-xs text-fg-3 sm:col-span-3">{s.disclaimer}</p>
       </div>
     ) : (
       <EmptyState icon={FlaskConical} title="Waiting for your match" action={<Button variant="secondary" onClick={st.reload}><RefreshCw size={15} /> Check again</Button>}>You've answered. Results appear once they answer too. Their individual answers are never shown.</EmptyState>
@@ -305,18 +305,18 @@ function LabSession({ matchId }) {
     <div className="space-y-5">
       {questions.map((q, i) => (
         <Card key={q.id}>
-          <p className="mb-3 font-medium text-white">{i + 1}. {q.prompt}</p>
+          <p className="mb-3 font-medium text-fg">{i + 1}. {q.prompt}</p>
           <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={q.prompt}>
             {q.options.map((o) => (
               <button key={o.key} role="radio" aria-checked={answers[q.id] === o.key} onClick={() => setAnswers({ ...answers, [q.id]: o.key })}
-                className={`rounded-xl border px-3 py-2.5 text-left text-sm transition ${answers[q.id] === o.key ? 'border-brand-400 bg-brand-500/15 text-white' : 'border-line text-slate-300 hover:bg-white/5'}`}>
-                <b className="mr-2 text-slate-500">{o.key}</b>{o.label}
+                className={`rounded-xl border px-3 py-2.5 text-left text-sm transition ${answers[q.id] === o.key ? 'border-accent bg-accent-soft text-fg' : 'border-line text-fg-2 hover:bg-sunk'}`}>
+                <b className="mr-2 text-fg-3">{o.key}</b>{o.label}
               </button>
             ))}
           </div>
         </Card>
       ))}
-      <p className="text-xs text-slate-500">{qs.data.disclaimer}</p>
+      <p className="text-xs text-fg-3">{qs.data.disclaimer}</p>
       <Button onClick={submit} disabled={!done} loading={saving}>Submit answers</Button>
     </div>
   );
@@ -341,14 +341,14 @@ export function IcebreakerList({ matchId, onPick }) {
     <div className="space-y-3">
       {q.data.icebreakers.map((i) => (
         <Card key={i.question} className="space-y-2">
-          <p className="text-xs text-slate-400">{i.context}</p>
-          <p className="text-white">“{i.question}”</p>
+          <p className="text-xs text-fg-3">{i.context}</p>
+          <p className="text-fg">“{i.question}”</p>
           <Button size="sm" variant="secondary" as={onPick ? 'button' : Link} {...(onPick ? { onClick: () => onPick(i.question) } : { to: `/chat/${matchId}`, state: { draft: i.question } })}>
             {onPick ? 'Use this' : 'Send in chat'}
           </Button>
         </Card>
       ))}
-      <p className="text-xs text-slate-500">{q.data.source === 'ai' ? 'Written with AI help from shared interests only.' : 'Generated from shared interests.'} Nothing hidden is ever used.</p>
+      <p className="text-xs text-fg-3">{q.data.source === 'ai' ? 'Written with AI help from shared interests only.' : 'Generated from shared interests.'} Nothing hidden is ever used.</p>
     </div>
   );
 }

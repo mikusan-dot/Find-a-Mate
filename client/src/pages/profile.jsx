@@ -12,35 +12,35 @@ export function Profile() {
   return (
     <div className="space-y-6">
       <PageHeader title="Your profile" action={<Button as={Link} to="/profile/edit" variant="secondary" size="sm"><Pencil size={15} /> Edit</Button>} />
-      <Card glass className="space-y-4">
+      <Card className="space-y-4">
         <div className="flex items-center gap-4">
           <Avatar src={p.photoURL} name={p.displayName} size={80} />
           <div>
-            <p className="text-xl font-semibold text-white">{p.displayName}</p>
-            <p className="text-sm text-slate-400">{[p.department, p.academicYear && `${ordinal(p.academicYear)} Year`, p.age].filter(Boolean).join(' · ')}</p>
+            <p className="text-xl font-semibold text-fg">{p.displayName}</p>
+            <p className="text-sm text-fg-3">{[p.department, p.academicYear && `${ordinal(p.academicYear)} Year`, p.age].filter(Boolean).join(' · ')}</p>
             <VerifiedBadge university={me.university?.name} />
           </div>
         </div>
-        {p.bio && <p className="text-sm text-slate-300">{p.bio}</p>}
+        {p.bio && <p className="text-sm text-fg-2">{p.bio}</p>}
         <div className="flex flex-wrap gap-2">{p.goals?.map((g) => <Badge key={g} tone="brand">{goalEmoji(g)} {goalLabel(g)}</Badge>)}</div>
         <div className="flex flex-wrap gap-2">{p.interests?.map((i) => <Chip key={i}>{interestEmoji(i)} {i}</Chip>)}</div>
       </Card>
       <Card>
-        <div className="flex items-center justify-between"><h2 className="font-semibold text-white">Profile completeness</h2><span className="text-sm text-slate-300">{c.percent}%</span></div>
+        <div className="flex items-center justify-between"><h2 className="font-semibold text-fg">Profile completeness</h2><span className="text-sm text-fg-2">{c.percent}%</span></div>
         <ProgressBar value={c.percent} className="mt-3" />
-        {c.missing.length > 0 && <><p className="mt-3 text-sm text-slate-400">Missing:</p><ul className="mt-1 list-inside list-disc text-sm text-slate-300">{c.missing.map((m) => <li key={m}>{m}</li>)}</ul><Button as={Link} to="/profile/edit" className="mt-4" size="sm">Complete Profile</Button></>}
+        {c.missing.length > 0 && <><p className="mt-3 text-sm text-fg-3">Missing:</p><ul className="mt-1 list-inside list-disc text-sm text-fg-2">{c.missing.map((m) => <li key={m}>{m}</li>)}</ul><Button as={Link} to="/profile/edit" className="mt-4" size="sm">Complete Profile</Button></>}
       </Card>
       <Card>
-        <h2 className="mb-4 font-semibold text-white">Your mindset</h2>
+        <h2 className="mb-4 font-semibold text-fg">Your mindset</h2>
         <div className="space-y-3">
           {TRAITS.map((t) => (
             <div key={t.id}>
-              <div className="mb-1 flex justify-between text-xs text-slate-400"><span>{t.left}</span><span>{t.right}</span></div>
-              <div className="relative h-1.5 rounded-full bg-ink-600"><span className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-400" style={{ left: `${p.personality?.[t.id] ?? 50}%` }} /></div>
+              <div className="mb-1 flex justify-between text-xs text-fg-3"><span>{t.left}</span><span>{t.right}</span></div>
+              <div className="relative h-1.5 rounded-full bg-sunk"><span className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent" style={{ left: `${p.personality?.[t.id] ?? 50}%` }} /></div>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-xs text-slate-500">Who sees this is controlled in <Link to="/settings/privacy" className="text-brand-300 underline">Privacy Center</Link>. Your student ID and email are never shown.</p>
+        <p className="mt-4 text-xs text-fg-3">Who sees this is controlled in <Link to="/settings/privacy" className="text-accent-ink underline">Privacy Center</Link>. Your student ID and email are never shown.</p>
       </Card>
     </div>
   );
@@ -69,9 +69,9 @@ export function ProfileEdit() {
     <div className="space-y-6 pb-8">
       <PageHeader title="Edit profile" subtitle="Changes update your recommendations." />
       {SECTIONS.map((s) => (
-        <Card key={s.id} glass>
-          <h2 className="text-lg font-semibold text-white">{s.title}</h2>
-          <p className="mb-5 text-sm text-slate-400">{s.subtitle}</p>
+        <Card key={s.id} bg-card border border-line>
+          <h2 className="text-lg font-semibold text-fg">{s.title}</h2>
+          <p className="mb-5 text-sm text-fg-3">{s.subtitle}</p>
           <s.Component value={draft} set={set} university={me.university} />
         </Card>
       ))}
