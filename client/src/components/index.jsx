@@ -74,8 +74,8 @@ export function ToastProvider({ children }) {
         <AnimatePresence>
           {items.map((t) => (
             <motion.div key={t.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className={cn('pointer-events-auto flex max-w-md items-center gap-2 rounded-xl border px-4 py-3 text-sm shadow-xl',
-                t.kind === 'error' ? 'border-red-500/30 bg-red-950/90 text-red-100' : t.kind === 'success' ? 'border-emerald-500/30 bg-emerald-950/90 text-emerald-100' : 'border-line bg-ink-800 text-slate-100')}>
+              className={cn('pointer-events-auto flex max-w-md items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-medium',
+                t.kind === 'error' ? 'border-bad bg-bad-soft text-bad' : t.kind === 'success' ? 'border-ok bg-ok-soft text-ok' : 'border-line-strong bg-card text-fg')}>
               {t.kind === 'error' ? <AlertTriangle size={16} /> : t.kind === 'success' ? <Check size={16} /> : <Sparkles size={16} />}
               {t.message}
             </motion.div>
@@ -90,26 +90,26 @@ export function ToastProvider({ children }) {
 export function Logo({ size = 28, text = true }) {
   return (
     <span className="inline-flex items-center gap-2 font-semibold tracking-tight">
-      <span className="brand-gradient grid place-items-center rounded-lg" style={{ width: size, height: size }} aria-hidden>
-        <svg viewBox="0 0 32 32" width={size * 0.7} height={size * 0.7} fill="none" stroke="white" strokeWidth="2.4"><circle cx="11.5" cy="16" r="5.5" /><circle cx="20.5" cy="16" r="5.5" /></svg>
+      <span className="grid place-items-center rounded-lg bg-accent" style={{ width: size, height: size }} aria-hidden>
+        <svg viewBox="0 0 32 32" width={size * 0.7} height={size * 0.7} fill="none" stroke="var(--accent-fg)" strokeWidth="2.4"><circle cx="11.5" cy="16" r="5.5" /><circle cx="20.5" cy="16" r="5.5" /></svg>
       </span>
-      {text && <span className="text-lg text-white">MindMesh</span>}
+      {text && <span className="display text-xl text-fg">MindMesh</span>}
     </span>
   );
 }
 
 const BTN = {
-  primary: 'brand-gradient text-white shadow-lg shadow-brand-600/20 hover:brightness-110',
-  secondary: 'surface text-slate-100 hover:bg-ink-700',
-  ghost: 'text-slate-300 hover:bg-white/5',
-  danger: 'bg-red-600/90 text-white hover:bg-red-600',
-  outlineDanger: 'border border-red-500/40 text-red-300 hover:bg-red-500/10',
+  primary: 'bg-accent text-accent-fg hover:bg-accent-hover',
+  secondary: 'surface text-fg hover:bg-sunk',
+  ghost: 'text-fg-2 hover:bg-sunk hover:text-fg',
+  danger: 'bg-bad text-card hover:opacity-90',
+  outlineDanger: 'border border-bad text-bad hover:bg-bad-soft',
 };
 export function Button({ variant = 'primary', size = 'md', loading, disabled, className, children, as: As = 'button', ...rest }) {
-  const sizes = { sm: 'px-3 py-1.5 text-sm', md: 'px-4 py-2.5 text-sm', lg: 'px-6 py-3 text-base' };
+  const sizes = { sm: 'min-h-9 px-3 py-1.5 text-sm', md: 'min-h-11 px-4 py-2.5 text-sm', lg: 'min-h-12 px-6 py-3 text-base' };
   return (
     <As
-      className={cn('inline-flex items-center justify-center gap-2 rounded-xl font-medium transition active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50', BTN[variant], sizes[size], className)}
+      className={cn('inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50', BTN[variant], sizes[size], className)}
       disabled={As === 'button' ? disabled || loading : undefined}
       aria-busy={loading || undefined}
       {...rest}
@@ -120,21 +120,21 @@ export function Button({ variant = 'primary', size = 'md', loading, disabled, cl
   );
 }
 
-export const Card = ({ className, children, glass, ...rest }) => (
-  <div className={cn('rounded-2xl p-5', glass ? 'glass' : 'surface', className)} {...rest}>{children}</div>
+export const Card = ({ className, children, ...rest }) => (
+  <div className={cn('surface rounded-xl p-5', className)} {...rest}>{children}</div>
 );
 
 export function Field({ label, hint, error, children, htmlFor }) {
   return (
     <div className="space-y-1.5">
-      {label && <label htmlFor={htmlFor} className="block text-sm font-medium text-slate-200">{label}</label>}
+      {label && <label htmlFor={htmlFor} className="block text-sm font-medium text-fg">{label}</label>}
       {children}
-      {hint && !error && <p className="text-xs text-slate-400">{hint}</p>}
-      {error && <p className="text-xs text-red-300" role="alert">{error}</p>}
+      {hint && !error && <p className="text-xs text-fg-3">{hint}</p>}
+      {error && <p className="text-xs font-medium text-bad" role="alert">{error}</p>}
     </div>
   );
 }
-const inputCls = 'w-full rounded-xl border border-line bg-ink-900 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-brand-400 focus:outline-none';
+const inputCls = 'min-h-11 w-full rounded-lg border border-line-strong bg-card px-3.5 py-2.5 text-sm text-fg placeholder:text-fg-3 hover:border-fg-3';
 export const Input = ({ className, ...p }) => <input className={cn(inputCls, className)} {...p} />;
 export const Textarea = ({ className, ...p }) => <textarea className={cn(inputCls, 'min-h-24 resize-y', className)} {...p} />;
 export const Select = ({ className, children, ...p }) => <select className={cn(inputCls, className)} {...p}>{children}</select>;
@@ -143,24 +143,24 @@ export const Chip = ({ children, active, onClick, className, ...p }) => {
   const Tag = onClick ? 'button' : 'span';
   return (
     <Tag type={onClick ? 'button' : undefined} onClick={onClick} aria-pressed={onClick ? !!active : undefined}
-      className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition',
-        active ? 'border-brand-400 bg-brand-500/15 text-brand-300' : 'border-line bg-white/[0.03] text-slate-300', onClick && !active && 'hover:bg-white/10', className)} {...p}>
+      className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors',
+        active ? 'border-accent bg-accent-soft font-medium text-accent-ink' : 'border-line bg-card text-fg-2', onClick && !active && 'hover:border-line-strong hover:bg-sunk', className)} {...p}>
       {children}
     </Tag>
   );
 };
 
 export const Badge = ({ tone = 'neutral', children, className }) => (
-  <span className={cn('inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
-    { neutral: 'bg-white/5 text-slate-300', good: 'bg-emerald-500/15 text-emerald-300', warn: 'bg-amber-500/15 text-amber-300', bad: 'bg-red-500/15 text-red-300', brand: 'bg-brand-500/15 text-brand-300' }[tone], className)}>
+  <span className={cn('inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold',
+    { neutral: 'bg-sunk text-fg-2', good: 'bg-ok-soft text-ok', warn: 'bg-warn-soft text-warn', bad: 'bg-bad-soft text-bad', brand: 'bg-accent-soft text-accent-ink' }[tone], className)}>
     {children}
   </span>
 );
 
 /** "Verified Student" + university. Shows trust without exposing any verification data. */
 export const VerifiedBadge = ({ university }) => (
-  <span className="inline-flex items-center gap-1.5 text-xs text-emerald-300">
-    <ShieldCheck size={14} /> Verified Student{university ? <span className="text-slate-400"> · {university}</span> : null}
+  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-ok">
+    <ShieldCheck size={14} /> Verified Student{university ? <span className="font-normal text-fg-3"> · {university}</span> : null}
   </span>
 );
 
@@ -169,14 +169,14 @@ export function Avatar({ src, name = '?', size = 48, className }) {
   return src ? (
     <img src={src} alt="" width={size} height={size} loading="lazy" decoding="async" className={cn('rounded-full object-cover', className)} style={{ width: size, height: size }} />
   ) : (
-    <span className={cn('grid shrink-0 place-items-center rounded-full bg-ink-600 font-semibold text-brand-300', className)} style={{ width: size, height: size, fontSize: size * 0.34 }} aria-hidden>{initials}</span>
+    <span className={cn('grid shrink-0 place-items-center rounded-full bg-accent-soft font-semibold text-accent-ink', className)} style={{ width: size, height: size, fontSize: size * 0.34 }} aria-hidden>{initials}</span>
   );
 }
 
 export function ProgressBar({ value, className }) {
   return (
-    <div className={cn('h-2 w-full overflow-hidden rounded-full bg-ink-600', className)} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
-      <motion.div className="brand-gradient h-full rounded-full" initial={{ width: 0 }} animate={{ width: `${value}%` }} transition={{ duration: 0.8, ease: 'easeOut' }} />
+    <div className={cn('h-2 w-full overflow-hidden rounded-full bg-sunk', className)} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
+      <motion.div className="h-full rounded-full bg-accent" initial={{ width: 0 }} animate={{ width: `${value}%` }} transition={{ duration: 0.8, ease: 'easeOut' }} />
     </div>
   );
 }
@@ -186,24 +186,24 @@ export function ScoreRing({ value, size = 64 }) {
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }} role="img" aria-label={`${value}% compatible`}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--color-ink-600)" strokeWidth="5" />
-        <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--color-brand-400)" strokeWidth="5" strokeLinecap="round"
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--sunk)" strokeWidth="5" />
+        <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--accent)" strokeWidth="5" strokeLinecap="round"
           strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - value / 100) }} transition={{ duration: 0.9, ease: 'easeOut' }} />
       </svg>
-      <span className="absolute inset-0 grid place-items-center text-sm font-semibold text-white">{value}%</span>
+      <span className="absolute inset-0 grid place-items-center num text-sm font-semibold text-fg">{value}%</span>
     </div>
   );
 }
 
 export const Skeleton = ({ className }) => <div className={cn('skeleton', className)} aria-hidden />;
-export const Spinner = ({ className }) => <Loader2 className={cn('animate-spin text-brand-400', className)} aria-label="Loading" />;
+export const Spinner = ({ className }) => <Loader2 className={cn('animate-spin text-accent', className)} aria-label="Loading" />;
 
 export function EmptyState({ icon: Icon = Inbox, title, children, action }) {
   return (
-    <div className="grid place-items-center rounded-2xl border border-dashed border-line px-6 py-14 text-center">
-      <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-white/5 text-brand-300"><Icon size={22} /></div>
-      <h3 className="text-base font-semibold text-white">{title}</h3>
-      {children && <p className="mt-1.5 max-w-sm text-sm text-slate-400">{children}</p>}
+    <div className="grid place-items-center rounded-xl border border-dashed border-line-strong px-6 py-14 text-center">
+      <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-accent-soft text-accent-ink"><Icon size={22} /></div>
+      <h3 className="display text-lg font-semibold text-fg">{title}</h3>
+      {children && <p className="mt-1.5 max-w-sm text-sm text-fg-3">{children}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
@@ -211,10 +211,10 @@ export function EmptyState({ icon: Icon = Inbox, title, children, action }) {
 
 export function ErrorState({ error, onRetry, title = "Couldn't load this" }) {
   return (
-    <div className="grid place-items-center rounded-2xl border border-red-500/20 bg-red-500/5 px-6 py-12 text-center" role="alert">
-      <AlertTriangle className="mb-3 text-red-300" />
-      <h3 className="font-semibold text-white">{title}</h3>
-      <p className="mt-1 max-w-sm text-sm text-slate-400">{error?.message || 'Please try again.'}</p>
+    <div className="grid place-items-center rounded-xl border border-bad bg-bad-soft px-6 py-12 text-center" role="alert">
+      <AlertTriangle className="mb-3 text-bad" />
+      <h3 className="font-semibold text-fg">{title}</h3>
+      <p className="mt-1 max-w-sm text-sm text-fg-2">{error?.message || 'Please try again.'}</p>
       {onRetry && <Button variant="secondary" size="sm" className="mt-4" onClick={onRetry}>Try again</Button>}
     </div>
   );
@@ -223,8 +223,8 @@ export function ErrorState({ error, onRetry, title = "Couldn't load this" }) {
 export const PageHeader = ({ title, subtitle, action }) => (
   <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-white">{title}</h1>
-      {subtitle && <p className="mt-1 text-sm text-slate-400">{subtitle}</p>}
+      <h1 className="text-3xl font-semibold text-fg">{title}</h1>
+      {subtitle && <p className="mt-1.5 text-sm text-fg-3">{subtitle}</p>}
     </div>
     {action}
   </div>
@@ -233,8 +233,8 @@ export const PageHeader = ({ title, subtitle, action }) => (
 export function Toggle({ checked, onChange, label, disabled }) {
   return (
     <button type="button" role="switch" aria-checked={checked} aria-label={label} disabled={disabled} onClick={() => onChange(!checked)}
-      className={cn('relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-50', checked ? 'bg-brand-500' : 'bg-ink-600')}>
-      <span className={cn('absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition', checked && 'translate-x-5')} />
+      className={cn('relative h-6 w-11 shrink-0 rounded-full border transition-colors disabled:opacity-50', checked ? 'border-accent bg-accent' : 'border-line-strong bg-sunk')}>
+      <span className={cn('absolute left-0.5 top-0.5 h-4 w-4 rounded-full transition-transform', checked ? 'translate-x-5 bg-accent-fg' : 'bg-fg-3')} />
     </button>
   );
 }
@@ -242,7 +242,7 @@ export function Toggle({ checked, onChange, label, disabled }) {
 export function Slider({ left, right, value, onChange, id }) {
   return (
     <div>
-      <div className="mb-2 flex justify-between text-sm"><span className={value < 45 ? 'text-brand-300' : 'text-slate-400'}>{left}</span><span className={value > 55 ? 'text-brand-300' : 'text-slate-400'}>{right}</span></div>
+      <div className="mb-2 flex justify-between text-sm"><span className={value < 45 ? 'font-semibold text-accent-ink' : 'text-fg-3'}>{left}</span><span className={value > 55 ? 'font-semibold text-accent-ink' : 'text-fg-3'}>{right}</span></div>
       <input id={id} type="range" min={0} max={100} step={5} value={value ?? 50} onChange={(e) => onChange(Number(e.target.value))} aria-label={`${left} to ${right}`} />
     </div>
   );
@@ -263,13 +263,13 @@ export function Modal({ open, onClose, title, children, wide }) {
   return (
     <AnimatePresence>
       {open && (
-        <motion.div className="fixed inset-0 z-50 grid items-end bg-black/60 p-0 backdrop-blur-sm sm:place-items-center sm:p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+        <motion.div className="fixed inset-0 z-50 grid items-end bg-fg/50 p-0 sm:place-items-center sm:p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
           <motion.div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={title}
             initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}
-            className={cn('glass max-h-[90vh] w-full overflow-y-auto rounded-t-3xl p-6 outline-none sm:rounded-3xl', wide ? 'sm:max-w-2xl' : 'sm:max-w-md')}>
+            className={cn('surface max-h-[90vh] w-full overflow-y-auto rounded-t-2xl p-6 outline-none sm:rounded-xl', wide ? 'sm:max-w-2xl' : 'sm:max-w-md')}>
             <div className="mb-4 flex items-start justify-between gap-4">
-              <h2 className="text-lg font-semibold text-white">{title}</h2>
-              <button onClick={onClose} aria-label="Close" className="rounded-lg p-1 text-slate-400 hover:bg-white/10"><X size={18} /></button>
+              <h2 className="text-xl font-semibold text-fg">{title}</h2>
+              <button onClick={onClose} aria-label="Close" className="grid h-9 w-9 place-items-center rounded-lg text-fg-3 hover:bg-sunk hover:text-fg"><X size={18} /></button>
             </div>
             {children}
           </motion.div>
@@ -287,7 +287,7 @@ export function ConfirmDialog({ open, onClose, onConfirm, title, children, confi
   };
   return (
     <Modal open={open} onClose={onClose} title={title}>
-      <div className="text-sm leading-relaxed text-slate-300">{children}</div>
+      <div className="text-sm leading-relaxed text-fg-2">{children}</div>
       <div className="mt-6 flex justify-end gap-2">
         <Button variant="ghost" onClick={onClose}>Cancel</Button>
         <Button variant={danger ? 'danger' : 'primary'} loading={busy} onClick={go}>{confirmLabel}</Button>
@@ -355,29 +355,29 @@ function NotificationBell() {
   };
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`} aria-expanded={open} className="relative rounded-xl p-2 text-slate-300 hover:bg-white/5">
+      <button onClick={() => setOpen((o) => !o)} aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`} aria-expanded={open} className="relative grid h-10 w-10 place-items-center rounded-lg text-fg-2 hover:bg-sunk">
         <Bell size={20} />
-        {unread > 0 && <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-semibold text-white">{unread > 9 ? '9+' : unread}</span>}
+        {unread > 0 && <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-fg">{unread > 9 ? '9+' : unread}</span>}
       </button>
       <AnimatePresence>
         {open && (
           <>
             <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-            <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="glass absolute right-0 z-40 mt-2 w-80 max-w-[90vw] rounded-2xl p-2 shadow-2xl">
+            <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="surface absolute right-0 z-40 mt-2 w-80 max-w-[90vw] rounded-xl p-2 shadow-lg">
               <div className="flex items-center justify-between px-3 py-2">
-                <span className="text-sm font-semibold text-white">Notifications</span>
-                {unread > 0 && <button onClick={markAllRead} className="text-xs text-brand-300 hover:underline">Mark all read</button>}
+                <span className="text-sm font-semibold text-fg">Notifications</span>
+                {unread > 0 && <button onClick={markAllRead} className="text-xs font-medium text-accent-ink hover:underline">Mark all read</button>}
               </div>
               <div className="max-h-96 overflow-y-auto">
-                {items.length === 0 && <p className="px-3 py-8 text-center text-sm text-slate-400">You're all caught up.</p>}
+                {items.length === 0 && <p className="px-3 py-8 text-center text-sm text-fg-3">You're all caught up.</p>}
                 {items.map((n) => (
-                  <button key={n.id} onClick={() => go(n)} className={cn('flex w-full gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-white/5', !n.read && 'bg-brand-500/5')}>
-                    <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', n.read ? 'bg-transparent' : 'bg-brand-400')} />
-                    <span><span className="block text-sm font-medium text-slate-100">{n.title}</span><span className="block text-xs text-slate-400">{n.body}</span></span>
+                  <button key={n.id} onClick={() => go(n)} className={cn('flex w-full gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-sunk', !n.read && 'bg-accent-soft/50')}>
+                    <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', n.read ? 'bg-transparent' : 'bg-accent')} />
+                    <span><span className="block text-sm font-medium text-fg">{n.title}</span><span className="block text-xs text-fg-3">{n.body}</span></span>
                   </button>
                 ))}
               </div>
-              <Link to="/settings" onClick={() => setOpen(false)} className="block px-3 py-2 text-center text-xs text-slate-400 hover:text-slate-200">Notification settings</Link>
+              <Link to="/settings" onClick={() => setOpen(false)} className="block px-3 py-2 text-center text-xs text-fg-3 hover:text-fg">Notification settings</Link>
             </motion.div>
           </>
         )}
@@ -405,24 +405,24 @@ export function AppShell() {
   const { unreadMessages } = useNotifications();
   const loc = useLocation();
   const isStaff = !!me?.role;
-  const link = ({ isActive }) => cn('flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition', isActive ? 'bg-brand-500/15 text-brand-300' : 'text-slate-400 hover:bg-white/5 hover:text-slate-100');
+  const link = ({ isActive }) => cn('flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors', isActive ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-fg-2 hover:bg-sunk hover:text-fg');
   return (
     <div className="min-h-full md:pl-64">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-line bg-ink-900/70 p-4 backdrop-blur md:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-line bg-card p-4 md:flex">
         <Link to="/dashboard" className="mb-8 px-2 pt-2"><Logo /></Link>
         <nav className="flex flex-1 flex-col gap-1" aria-label="Main">
           {[...NAV, ...EXTRA].map(({ to, label, icon: Icon }) => (
             <NavLink key={to} to={to} className={link}>
               <Icon size={18} /> {label}
-              {to === '/chat' && unreadMessages > 0 && <span className="ml-auto rounded-full bg-brand-500 px-1.5 text-[11px] font-semibold text-white">{unreadMessages}</span>}
+              {to === '/chat' && unreadMessages > 0 && <span className="ml-auto rounded-full bg-accent px-1.5 text-[11px] font-bold text-accent-fg">{unreadMessages}</span>}
             </NavLink>
           ))}
           {isStaff && <NavLink to="/admin" className={link}><BarChart3 size={18} /> Admin</NavLink>}
         </nav>
-        <button onClick={logout} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-400 hover:bg-white/5"><LogOut size={18} /> Sign out</button>
+        <button onClick={logout} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-fg-2 hover:bg-sunk hover:text-fg"><LogOut size={18} /> Sign out</button>
       </aside>
 
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-ink-950/80 px-4 py-3 backdrop-blur md:justify-end">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-paper px-4 py-2 md:justify-end">
         <Link to="/dashboard" className="md:hidden"><Logo size={26} /></Link>
         <div className="flex items-center gap-1"><NotificationBell /></div>
       </header>
@@ -431,11 +431,11 @@ export function AppShell() {
         <ErrorBoundary key={loc.pathname}><PageTransition><Outlet /></PageTransition></ErrorBoundary>
       </main>
 
-      <nav className="safe-bottom glass fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line md:hidden" aria-label="Main">
+      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-card md:hidden" aria-label="Main">
         {NAV.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => cn('relative flex flex-col items-center gap-0.5 py-2.5 text-[11px]', isActive ? 'text-brand-300' : 'text-slate-400')}>
+          <NavLink key={to} to={to} className={({ isActive }) => cn('relative flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-medium', isActive ? 'text-accent-ink' : 'text-fg-3')}>
             <Icon size={20} />{label}
-            {to === '/chat' && unreadMessages > 0 && <span className="absolute right-[28%] top-1.5 h-2 w-2 rounded-full bg-brand-400" />}
+            {to === '/chat' && unreadMessages > 0 && <span className="absolute right-[28%] top-1.5 h-2 w-2 rounded-full bg-accent" />}
           </NavLink>
         ))}
       </nav>

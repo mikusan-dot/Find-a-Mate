@@ -15,7 +15,7 @@ export function AdminLayout() {
     <div>
       <PageHeader title="Admin" subtitle={`Signed in as ${me.role.replace('_', ' ').toLowerCase()}. Private conversations are never accessible here.`} />
       <nav className="mb-6 flex gap-1 overflow-x-auto border-b border-line pb-2" aria-label="Admin sections">
-        {TABS.map(([to, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => cn('whitespace-nowrap rounded-xl px-3.5 py-2 text-sm', isActive ? 'bg-brand-500/15 text-brand-300' : 'text-slate-400 hover:bg-white/5')}>{label}</NavLink>)}
+        {TABS.map(([to, label, end]) => <NavLink key={to} to={to} end={end} className={({ isActive }) => cn('whitespace-nowrap rounded-xl px-3.5 py-2 text-sm', isActive ? 'bg-accent-soft text-accent-ink' : 'text-fg-3 hover:bg-sunk')}>{label}</NavLink>)}
       </nav>
       <Outlet />
     </div>
@@ -30,7 +30,7 @@ export function AdminOverview() {
     <Load q={q}>{(s) => (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[['Total users', s.users], ['Verified students', s.verified], ['Pending verification', s.pending], ['Suspended', s.suspended], ['Active matches', s.activeMatches], ['Open reports', s.openReports]].map(([l, v]) => (
-          <Card key={l}><p className="text-sm text-slate-400">{l}</p><p className="mt-1 text-3xl font-semibold text-white">{v}</p></Card>
+          <Card key={l}><p className="text-sm text-fg-3">{l}</p><p className="mt-1 text-3xl font-semibold text-fg">{v}</p></Card>
         ))}
       </div>
     )}</Load>
@@ -79,13 +79,13 @@ export function AdminUsers() {
         <Select className="w-52" aria-label="Email verification" value={filter.emailVerified} onChange={(e) => setFilter({ ...filter, emailVerified: e.target.value })}><option value="">Any verification</option><option value="true">Verified</option><option value="false">Pending verification</option></Select>
       </div>
       <Load q={q}>{() => all.length === 0 ? <EmptyState title="No users match">Try changing the filters.</EmptyState> : (
-        <div className="overflow-x-auto rounded-2xl border border-line">
+        <div className="overflow-x-auto rounded-xl border border-line">
           <table className="w-full text-left text-sm">
-            <thead className="bg-ink-800 text-xs uppercase text-slate-400"><tr>{['User', 'Dept', 'University', 'Status', 'Joined', ''].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr></thead>
+            <thead className="bg-card text-xs uppercase text-fg-3"><tr>{['User', 'Dept', 'University', 'Status', 'Joined', ''].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr></thead>
             <tbody className="divide-y divide-line">
               {all.map((u) => (
-                <tr key={u.uid} className="text-slate-300">
-                  <td className="px-4 py-3"><span className="block text-white">{u.displayName || '–'}</span><span className="text-xs text-slate-500">{u.alias}</span></td>
+                <tr key={u.uid} className="text-fg-2">
+                  <td className="px-4 py-3"><span className="block text-fg">{u.displayName || '–'}</span><span className="text-xs text-fg-3">{u.alias}</span></td>
                   <td className="px-4 py-3">{u.department || '–'}</td><td className="px-4 py-3 uppercase">{u.universityId}</td>
                   <td className="px-4 py-3"><Badge tone={u.status === 'SUSPENDED' ? 'bad' : u.emailVerified ? 'good' : 'warn'}>{u.status === 'SUSPENDED' ? 'Suspended' : u.emailVerified ? 'Verified' : 'Pending'}</Badge></td>
                   <td className="px-4 py-3 whitespace-nowrap">{when(u.createdAt)}</td>
@@ -106,7 +106,7 @@ export function AdminUsers() {
         <div className="mt-5 flex justify-end gap-2"><Button variant="ghost" onClick={() => setTarget(null)}>Cancel</Button><Button variant={target?.kind === 'suspend' ? 'danger' : 'primary'} disabled={reason.trim().length < 5} onClick={run}>Confirm</Button></div>
       </Modal>
       <ConfirmDialog open={target?.kind === 'reinstate'} onClose={() => setTarget(null)} onConfirm={run} title="Reinstate account?" confirmLabel="Reinstate">The user can sign in again. Their ended matches stay ended.</ConfirmDialog>
-      <Modal open={!!sensitive} onClose={() => setSensitive(null)} title="Sensitive details"><p className="text-sm text-slate-300">Email: <b className="text-white">{sensitive?.email}</b></p><p className="mt-1 text-xs text-slate-500">Last sign-in: {sensitive?.lastSignIn}</p><p className="mt-4 text-xs text-amber-300">This lookup was logged.</p></Modal>
+      <Modal open={!!sensitive} onClose={() => setSensitive(null)} title="Sensitive details"><p className="text-sm text-fg-2">Email: <b className="text-fg">{sensitive?.email}</b></p><p className="mt-1 text-xs text-fg-3">Last sign-in: {sensitive?.lastSignIn}</p><p className="mt-4 text-xs text-warn">This lookup was logged.</p></Modal>
     </div>
   );
 }
@@ -129,8 +129,8 @@ export function AdminReports() {
       <Select className="w-44" aria-label="Report status" value={status} onChange={(e) => setStatus(e.target.value)}><option value="OPEN">Open</option><option value="RESOLVED">Resolved</option><option value="DISMISSED">Dismissed</option></Select>
       <Load q={q}>{(d) => d.reports.length === 0 ? <EmptyState title="No reports here">Nothing to review.</EmptyState> : (
         <div className="space-y-2">{d.reports.map((r) => (
-          <button key={r.id} onClick={() => setOpen(r.id)} className="surface flex w-full items-center justify-between gap-3 rounded-xl p-4 text-left hover:bg-ink-700">
-            <span><span className="block text-sm font-medium text-white">{catLabel(r.category)} · {r.reportedAlias}</span><span className="text-xs text-slate-400">{when(r.createdAt)}{r.hasEvidence ? ' · includes message excerpt' : ''}</span></span>
+          <button key={r.id} onClick={() => setOpen(r.id)} className="surface flex w-full items-center justify-between gap-3 rounded-xl p-4 text-left hover:bg-sunk">
+            <span><span className="block text-sm font-medium text-fg">{catLabel(r.category)} · {r.reportedAlias}</span><span className="text-xs text-fg-3">{when(r.createdAt)}{r.hasEvidence ? ' · includes message excerpt' : ''}</span></span>
             <Badge tone={r.status === 'OPEN' ? 'warn' : 'neutral'}>{r.status}</Badge>
           </button>
         ))}</div>
@@ -139,11 +139,11 @@ export function AdminReports() {
         {detail.loading || !detail.data ? <Skeleton className="h-40" /> : (
           <div className="space-y-4 text-sm">
             <div className="flex flex-wrap gap-2"><Badge tone="warn">{catLabel(detail.data.report.category)}</Badge><Badge>{detail.data.report.status}</Badge><Badge tone={detail.data.reported.openReports > 1 ? 'bad' : 'neutral'}>{detail.data.reported.openReports} open report(s) on this user</Badge></div>
-            <p className="text-slate-300">Reported: <b className="text-white">{detail.data.reported.displayName || detail.data.reported.alias}</b> {detail.data.reported.department ? `(${detail.data.reported.department})` : ''}</p>
-            {detail.data.report.details && <p className="rounded-xl bg-ink-900 p-3 text-slate-300">{detail.data.report.details}</p>}
+            <p className="text-fg-2">Reported: <b className="text-fg">{detail.data.reported.displayName || detail.data.reported.alias}</b> {detail.data.reported.department ? `(${detail.data.reported.department})` : ''}</p>
+            {detail.data.report.details && <p className="rounded-xl bg-card p-3 text-fg-2">{detail.data.report.details}</p>}
             {detail.data.report.evidence.length > 0 && (
-              <div><p className="mb-2 text-xs uppercase text-slate-500">Message excerpt shared by the reporter</p>
-                <ul className="space-y-1.5">{detail.data.report.evidence.map((m, i) => <li key={i} className={cn('rounded-lg px-3 py-2', m.from === 'reported' ? 'bg-red-500/10 text-red-100' : 'bg-ink-900 text-slate-300')}><span className="mr-2 text-xs text-slate-500">{m.from}</span>{m.text}</li>)}</ul></div>
+              <div><p className="mb-2 text-xs uppercase text-fg-3">Message excerpt shared by the reporter</p>
+                <ul className="space-y-1.5">{detail.data.report.evidence.map((m, i) => <li key={i} className={cn('rounded-lg px-3 py-2', m.from === 'reported' ? 'bg-bad-soft text-bad' : 'bg-card text-fg-2')}><span className="mr-2 text-xs text-fg-3">{m.from}</span>{m.text}</li>)}</ul></div>
             )}
             {detail.data.report.status === 'OPEN' && canAct && (
               <>
@@ -175,8 +175,8 @@ export function AdminUniversities() {
       {me.role === 'SUPER_ADMIN' && <Button onClick={() => setForm({ name: '', shortName: '', emailDomain: '', departments: '' })}>Add university</Button>}
       <Load q={q}>{(d) => (
         <div className="grid gap-3 md:grid-cols-2">{d.universities.map((u) => (
-          <Card key={u.id} className="flex items-start justify-between gap-3"><div><p className="font-medium text-white">{u.name}</p><p className="text-xs text-slate-400">{u.shortName} · @{u.emailDomain} · {u.verificationMethod}</p><p className="mt-1 text-xs text-slate-500">{(u.departments || []).join(', ')}</p></div>
-            <div className="text-right"><Badge tone={u.active ? 'good' : 'neutral'}>{u.active ? 'Active' : 'Inactive'}</Badge>{me.role === 'SUPER_ADMIN' && <button className="mt-2 block text-xs text-brand-300 hover:underline" onClick={() => toggle(u)}>{u.active ? 'Deactivate' : 'Activate'}</button>}</div></Card>
+          <Card key={u.id} className="flex items-start justify-between gap-3"><div><p className="font-medium text-fg">{u.name}</p><p className="text-xs text-fg-3">{u.shortName} · @{u.emailDomain} · {u.verificationMethod}</p><p className="mt-1 text-xs text-fg-3">{(u.departments || []).join(', ')}</p></div>
+            <div className="text-right"><Badge tone={u.active ? 'good' : 'neutral'}>{u.active ? 'Active' : 'Inactive'}</Badge>{me.role === 'SUPER_ADMIN' && <button className="mt-2 block text-xs text-accent-ink hover:underline" onClick={() => toggle(u)}>{u.active ? 'Deactivate' : 'Activate'}</button>}</div></Card>
         ))}</div>
       )}</Load>
       <Modal open={!!form} onClose={() => setForm(null)} title="Add university">
@@ -209,30 +209,30 @@ export function AdminModeration() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-3 font-semibold text-white">Flagged accounts</h2>
+        <h2 className="mb-3 font-semibold text-fg">Flagged accounts</h2>
         <Load q={flagged}>{(d) => d.flagged.length === 0 ? <EmptyState title="Nothing flagged">Accounts appear here with 2+ open reports or any threat report.</EmptyState> : (
-          <div className="space-y-2">{d.flagged.map((f) => <Card key={f.uid} className="flex items-center justify-between"><span className="text-sm text-white">{f.alias}</span><span className="flex gap-2"><Badge tone="bad">{f.openReports} open</Badge>{f.categories.map((c) => <Badge key={c}>{catLabel(c)}</Badge>)}</span></Card>)}</div>
+          <div className="space-y-2">{d.flagged.map((f) => <Card key={f.uid} className="flex items-center justify-between"><span className="text-sm text-fg">{f.alias}</span><span className="flex gap-2"><Badge tone="bad">{f.openReports} open</Badge>{f.categories.map((c) => <Badge key={c}>{catLabel(c)}</Badge>)}</span></Card>)}</div>
         )}</Load>
       </section>
       {isSuper && (
         <>
           <section>
-            <h2 className="mb-1 font-semibold text-white">Matching weights</h2>
-            <p className="mb-3 text-xs text-slate-500">Relative weights; they're normalized to 100%. Currently {Math.round(total * 100) / 100} total.</p>
+            <h2 className="mb-1 font-semibold text-fg">Matching weights</h2>
+            <p className="mb-3 text-xs text-fg-3">Relative weights; they're normalized to 100%. Currently {Math.round(total * 100) / 100} total.</p>
             <Load q={weights}>{() => cur && (
               <Card className="space-y-3">
                 {Object.keys(WEIGHT_LABELS).map((k) => (
-                  <div key={k} className="flex items-center gap-3"><label className="w-44 text-sm text-slate-300" htmlFor={`w-${k}`}>{WEIGHT_LABELS[k]}</label><input id={`w-${k}`} type="range" min={0} max={1} step={0.05} value={cur[k]} onChange={(e) => setW({ ...cur, [k]: Number(e.target.value) })} /><span className="w-12 text-right text-sm text-slate-300">{total ? Math.round((cur[k] / total) * 100) : 0}%</span></div>
+                  <div key={k} className="flex items-center gap-3"><label className="w-44 text-sm text-fg-2" htmlFor={`w-${k}`}>{WEIGHT_LABELS[k]}</label><input id={`w-${k}`} type="range" min={0} max={1} step={0.05} value={cur[k]} onChange={(e) => setW({ ...cur, [k]: Number(e.target.value) })} /><span className="w-12 text-right text-sm text-fg-2">{total ? Math.round((cur[k] / total) * 100) : 0}%</span></div>
                 ))}
                 <Button onClick={saveW} disabled={!w || total <= 0}>Save weights</Button>
               </Card>
             )}</Load>
           </section>
           <section>
-            <h2 className="mb-3 font-semibold text-white">Audit log</h2>
+            <h2 className="mb-3 font-semibold text-fg">Audit log</h2>
             <Load q={logs}>{(d) => d && (
-              <div className="overflow-x-auto rounded-2xl border border-line"><table className="w-full text-left text-xs"><thead className="bg-ink-800 text-slate-400"><tr>{['When', 'Role', 'Action', 'Target'].map((h) => <th key={h} className="px-3 py-2 font-medium">{h}</th>)}</tr></thead>
-                <tbody className="divide-y divide-line text-slate-300">{d.logs.map((l) => <tr key={l.id}><td className="px-3 py-2 whitespace-nowrap">{when(l.createdAt)}</td><td className="px-3 py-2">{l.actorRole}</td><td className="px-3 py-2">{l.action}</td><td className="px-3 py-2 font-mono">{String(l.target ?? '').slice(0, 24)}</td></tr>)}</tbody></table></div>
+              <div className="overflow-x-auto rounded-xl border border-line"><table className="w-full text-left text-xs"><thead className="bg-card text-fg-3"><tr>{['When', 'Role', 'Action', 'Target'].map((h) => <th key={h} className="px-3 py-2 font-medium">{h}</th>)}</tr></thead>
+                <tbody className="divide-y divide-line text-fg-2">{d.logs.map((l) => <tr key={l.id}><td className="px-3 py-2 whitespace-nowrap">{when(l.createdAt)}</td><td className="px-3 py-2">{l.actorRole}</td><td className="px-3 py-2">{l.action}</td><td className="px-3 py-2 font-mono">{String(l.target ?? '').slice(0, 24)}</td></tr>)}</tbody></table></div>
             )}</Load>
           </section>
         </>
@@ -250,10 +250,10 @@ export function AdminAnalytics() {
   return (
     <Load q={q}>{(d) => (
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card><h3 className="mb-3 text-sm font-medium text-white">New accounts (30 days)</h3><div className="h-56"><ResponsiveContainer><LineChart data={d.signups}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="date" tick={tick} tickFormatter={(v) => v.slice(5)} interval={4} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Line type="monotone" dataKey="value" name="Sign-ups" stroke="#7f9bff" strokeWidth={2} dot={false} /></LineChart></ResponsiveContainer></div></Card>
-        <Card><h3 className="mb-3 text-sm font-medium text-white">New matches (30 days)</h3><div className="h-56"><ResponsiveContainer><LineChart data={d.matches}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="date" tick={tick} tickFormatter={(v) => v.slice(5)} interval={4} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Line type="monotone" dataKey="value" name="Matches" stroke="#a78bfa" strokeWidth={2} dot={false} /></LineChart></ResponsiveContainer></div></Card>
-        <Card><h3 className="mb-3 text-sm font-medium text-white">Users by university</h3><div className="h-56"><ResponsiveContainer><BarChart data={d.usersByUniversity}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="name" tick={tick} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Bar dataKey="value" name="Users" fill="#7f9bff" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></Card>
-        <Card><h3 className="mb-3 text-sm font-medium text-white">Reports by category</h3><div className="h-56"><ResponsiveContainer><BarChart data={d.reportsByCategory.map((r) => ({ ...r, name: catLabel(r.category) }))}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="name" tick={tick} interval={0} angle={-25} textAnchor="end" height={60} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Bar dataKey="value" name="Reports" fill="#a78bfa" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></Card>
+        <Card><h3 className="mb-3 text-sm font-medium text-fg">New accounts (30 days)</h3><div className="h-56"><ResponsiveContainer><LineChart data={d.signups}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="date" tick={tick} tickFormatter={(v) => v.slice(5)} interval={4} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Line type="monotone" dataKey="value" name="Sign-ups" stroke="#7f9bff" strokeWidth={2} dot={false} /></LineChart></ResponsiveContainer></div></Card>
+        <Card><h3 className="mb-3 text-sm font-medium text-fg">New matches (30 days)</h3><div className="h-56"><ResponsiveContainer><LineChart data={d.matches}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="date" tick={tick} tickFormatter={(v) => v.slice(5)} interval={4} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Line type="monotone" dataKey="value" name="Matches" stroke="#a78bfa" strokeWidth={2} dot={false} /></LineChart></ResponsiveContainer></div></Card>
+        <Card><h3 className="mb-3 text-sm font-medium text-fg">Users by university</h3><div className="h-56"><ResponsiveContainer><BarChart data={d.usersByUniversity}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="name" tick={tick} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Bar dataKey="value" name="Users" fill="#7f9bff" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></Card>
+        <Card><h3 className="mb-3 text-sm font-medium text-fg">Reports by category</h3><div className="h-56"><ResponsiveContainer><BarChart data={d.reportsByCategory.map((r) => ({ ...r, name: catLabel(r.category) }))}><CartesianGrid {...chartProps} strokeDasharray="3 3" /><XAxis dataKey="name" tick={tick} interval={0} angle={-25} textAnchor="end" height={60} /><YAxis tick={tick} allowDecimals={false} width={28} /><Tooltip {...tip} /><Bar dataKey="value" name="Reports" fill="#a78bfa" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></Card>
       </div>
     )}</Load>
   );

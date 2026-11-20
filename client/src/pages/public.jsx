@@ -8,7 +8,7 @@ import { GENDERS, GOALS } from '../lib/constants.js';
 
 const Shell = ({ children, wide }) => (
   <div className="relative min-h-screen overflow-hidden">
-    <div className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-brand-600/10 blur-3xl" aria-hidden />
+    <div className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-accent-soft blur-3xl" aria-hidden />
     <header className="relative mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
       <Link to="/"><Logo /></Link>
       <nav className="flex items-center gap-2"><Button as={Link} to="/login" variant="ghost" size="sm">Sign in</Button><Button as={Link} to="/register" size="sm">Join</Button></nav>
@@ -30,9 +30,9 @@ export function Landing() {
     <Shell wide>
       <section className="mx-auto max-w-3xl pb-14 pt-12 text-center sm:pt-20">
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
-          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1 text-xs text-slate-300"><ShieldCheck size={14} className="text-emerald-300" /> Verified university students</span>
-          <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight text-white sm:text-6xl">Meet people who <span className="brand-text">actually get</span> your mindset.</h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-400">Friends, study partners, gaming teammates, and more, matched by how you think, not how you look.</p>
+          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-xs text-fg-2"><ShieldCheck size={14} className="text-ok" /> Verified university students</span>
+          <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight text-fg sm:text-6xl">Meet people who <span className="text-accent">actually get</span> your mindset.</h1>
+          <p className="mx-auto mt-5 max-w-xl text-lg text-fg-3">Friends, study partners, gaming teammates, and more, matched by how you think, not how you look.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button as={Link} to="/register" size="lg">Create your profile <ArrowRight size={18} /></Button>
             <Button as={Link} to="/login" size="lg" variant="secondary">I have an account</Button>
@@ -42,43 +42,43 @@ export function Landing() {
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {PILLARS.map(({ icon: Icon, title, body }) => (
-          <Card key={title} glass>
-            <div className="mb-3 grid h-10 w-10 place-items-center rounded-xl bg-brand-500/15 text-brand-300"><Icon size={20} /></div>
-            <h3 className="font-semibold text-white">{title}</h3>
-            <p className="mt-1.5 text-sm text-slate-400">{body}</p>
+          <Card key={title}>
+            <div className="mb-3 grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent-ink"><Icon size={20} /></div>
+            <h3 className="font-semibold text-fg">{title}</h3>
+            <p className="mt-1.5 text-sm text-fg-3">{body}</p>
           </Card>
         ))}
       </section>
 
       <section className="mt-20 grid items-center gap-10 md:grid-cols-2">
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight text-white">Quality over endless swiping</h2>
-          <p className="mt-3 text-slate-400">Every day you get a small, curated set of people with a clear breakdown of why you might connect, written cautiously, never promising certainty.</p>
-          <ol className="mt-6 space-y-3 text-sm text-slate-300">
+          <h2 className="text-3xl font-semibold tracking-tight text-fg">Quality over endless swiping</h2>
+          <p className="mt-3 text-fg-3">Every day you get a small, curated set of people with a clear breakdown of why you might connect, written cautiously, never promising certainty.</p>
+          <ol className="mt-6 space-y-3 text-sm text-fg-2">
             {['Verify with your university email', 'Build your mindset profile (about 5 minutes)', 'Review a few curated recommendations', 'Say "Interested". Chat unlocks only on a mutual match'].map((s, i) => (
-              <li key={s} className="flex items-center gap-3"><span className="grid h-6 w-6 place-items-center rounded-full bg-brand-500/20 text-xs font-semibold text-brand-300">{i + 1}</span>{s}</li>
+              <li key={s} className="flex items-center gap-3"><span className="grid h-6 w-6 place-items-center rounded-full bg-accent-soft text-xs font-semibold text-accent-ink">{i + 1}</span>{s}</li>
             ))}
           </ol>
         </div>
-        <Card glass className="mx-auto w-full max-w-sm">
-          <p className="mb-3 text-[11px] uppercase tracking-wider text-slate-500">Illustrative example</p>
+        <Card className="mx-auto w-full max-w-sm">
+          <p className="mb-3 text-[11px] uppercase tracking-wider text-fg-3">Illustrative example</p>
           <div className="flex items-center gap-4">
             <ScoreRing value={89} />
-            <div><p className="font-semibold text-white">Profile A7F2</p><p className="text-sm text-slate-400">CSE · 3rd Year</p><VerifiedBadge university="Your university" /></div>
+            <div><p className="font-semibold text-fg">Profile A7F2</p><p className="text-sm text-fg-3">CSE · 3rd Year</p><VerifiedBadge university="Your university" /></div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2"><Chip>🎮 Gaming</Chip><Chip>💻 Programming</Chip><Chip>📚 Technology</Chip></div>
-          <p className="mt-4 text-sm text-slate-400">You may have good compatibility because you both enjoy programming and prefer smaller social circles.</p>
+          <p className="mt-4 text-sm text-fg-3">You may have good compatibility because you both enjoy programming and prefer smaller social circles.</p>
         </Card>
       </section>
 
       <section className="mt-20 text-center">
-        <h2 className="text-2xl font-semibold text-white">Not just dating</h2>
+        <h2 className="text-2xl font-semibold text-fg">Not just dating</h2>
         <div className="mt-5 flex flex-wrap justify-center gap-2">{GOALS.filter((g) => g.id !== 'NOT_SURE').map((g) => <Chip key={g.id}>{g.emoji} {g.label}</Chip>)}</div>
       </section>
 
-      <footer className="mt-20 flex flex-wrap justify-between gap-4 border-t border-line pt-6 text-sm text-slate-500">
+      <footer className="mt-20 flex flex-wrap justify-between gap-4 border-t border-line pt-6 text-sm text-fg-3">
         <span>© {new Date().getFullYear()} MindMesh</span>
-        <span className="flex gap-4"><Link to="/privacy" className="hover:text-slate-300">Privacy</Link><Link to="/terms" className="hover:text-slate-300">Terms</Link></span>
+        <span className="flex gap-4"><Link to="/privacy" className="hover:text-fg-2">Privacy</Link><Link to="/terms" className="hover:text-fg-2">Terms</Link></span>
       </footer>
     </Shell>
   );
@@ -112,18 +112,18 @@ export function Login() {
 
   return (
     <Shell>
-      <Card glass className="mt-8">
-        <h1 className="text-2xl font-semibold text-white">Welcome back</h1>
-        <p className="mt-1 text-sm text-slate-400">Sign in with your university email.</p>
+      <Card className="mt-8">
+        <h1 className="text-2xl font-semibold text-fg">Welcome back</h1>
+        <p className="mt-1 text-sm text-fg-3">Sign in with your university email.</p>
         <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
           <Field label="University email" htmlFor="email"><Input id="email" type="email" autoComplete="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
           <Field label="Password" htmlFor="password"><Input id="password" type="password" autoComplete="current-password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></Field>
-          {error && <p className="text-sm text-red-300" role="alert">{error}</p>}
+          {error && <p className="text-sm text-bad" role="alert">{error}</p>}
           <Button type="submit" loading={busy} className="w-full" disabled={!form.email || !form.password}>Sign in</Button>
         </form>
         <div className="mt-4 flex justify-between text-sm">
-          <button className="text-brand-300 hover:underline" onClick={() => { setResetEmail(form.email); setForgot(true); }}>Forgot password?</button>
-          <Link to="/register" className="text-slate-400 hover:text-slate-200">Create account</Link>
+          <button className="text-accent-ink hover:underline" onClick={() => { setResetEmail(form.email); setForgot(true); }}>Forgot password?</button>
+          <Link to="/register" className="text-fg-3 hover:text-fg">Create account</Link>
         </div>
       </Card>
       <Modal open={forgot} onClose={() => setForgot(false)} title="Reset your password">
@@ -163,9 +163,9 @@ export function Register() {
 
   return (
     <Shell>
-      <Card glass className="mt-4">
-        <h1 className="text-2xl font-semibold text-white">Join MindMesh</h1>
-        <p className="mt-1 text-sm text-slate-400">Verified students only. Your student ID is hashed and never shown to anyone.</p>
+      <Card className="mt-4">
+        <h1 className="text-2xl font-semibold text-fg">Join MindMesh</h1>
+        <p className="mt-1 text-sm text-fg-3">Verified students only. Your student ID is hashed and never shown to anyone.</p>
         <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
           <Field label="University" htmlFor="uni">
             {unis.loading ? <Skeleton className="h-10" /> : (
@@ -190,15 +190,15 @@ export function Register() {
           <Field label="What are you here for?" hint="Choose one or more. You can change this later.">
             <div className="flex flex-wrap gap-2">{GOALS.map((g) => <Chip key={g.id} active={f.connectionTypes.includes(g.id)} onClick={() => toggleGoal(g.id)}>{g.emoji} {g.label}</Chip>)}</div>
           </Field>
-          <label className="flex items-start gap-3 text-sm text-slate-300">
-            <input type="checkbox" className="mt-1 h-4 w-4 accent-brand-500" checked={f.ageConfirmed} onChange={(e) => setF({ ...f, ageConfirmed: e.target.checked })} />
-            <span>I confirm I am 18 or older and agree to the <Link to="/terms" className="text-brand-300 underline">Terms</Link> and <Link to="/privacy" className="text-brand-300 underline">Privacy Policy</Link>.</span>
+          <label className="flex items-start gap-3 text-sm text-fg-2">
+            <input type="checkbox" className="mt-1 h-4 w-4 accent-accent" checked={f.ageConfirmed} onChange={(e) => setF({ ...f, ageConfirmed: e.target.checked })} />
+            <span>I confirm I am 18 or older and agree to the <Link to="/terms" className="text-accent-ink underline">Terms</Link> and <Link to="/privacy" className="text-accent-ink underline">Privacy Policy</Link>.</span>
           </label>
-          {problems.map((p) => <p key={p} className="text-sm text-amber-300">{p}</p>)}
-          {error && <p className="text-sm text-red-300" role="alert">{error}</p>}
+          {problems.map((p) => <p key={p} className="text-sm text-warn">{p}</p>)}
+          {error && <p className="text-sm text-bad" role="alert">{error}</p>}
           <Button type="submit" loading={busy} disabled={!ready} className="w-full">Create account</Button>
         </form>
-        <p className="mt-4 text-center text-sm text-slate-400">Already registered? <Link to="/login" className="text-brand-300 hover:underline">Sign in</Link></p>
+        <p className="mt-4 text-center text-sm text-fg-3">Already registered? <Link to="/login" className="text-accent-ink hover:underline">Sign in</Link></p>
       </Card>
     </Shell>
   );
@@ -241,16 +241,16 @@ export function Verify() {
 
   return (
     <Shell>
-      <Card glass className="mt-10 text-center">
-        <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-brand-500/15 text-brand-300"><MailCheck size={28} /></div>
-        <h1 className="text-2xl font-semibold text-white">Verify your university email</h1>
-        <p className="mt-2 text-sm text-slate-400">We sent a link to <span className="text-slate-200">{me?.email || fbUser?.email}</span>. Open it, then come back. This page updates by itself.</p>
+      <Card className="mt-10 text-center">
+        <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-xl bg-accent-soft text-accent-ink"><MailCheck size={28} /></div>
+        <h1 className="text-2xl font-semibold text-fg">Verify your university email</h1>
+        <p className="mt-2 text-sm text-fg-3">We sent a link to <span className="text-fg">{me?.email || fbUser?.email}</span>. Open it, then come back. This page updates by itself.</p>
         <div className="mt-6 space-y-3">
           <Button className="w-full" loading={busy} onClick={() => check(false)}>I've verified</Button>
           <Button variant="secondary" className="w-full" disabled={cool > 0} onClick={resend}>{cool > 0 ? `Resend in ${cool}s` : 'Resend email'}</Button>
-          <button className="text-sm text-slate-400 hover:text-slate-200" onClick={logout}>Use a different account</button>
+          <button className="text-sm text-fg-3 hover:text-fg" onClick={logout}>Use a different account</button>
         </div>
-        <p className="mt-6 flex items-center justify-center gap-2 text-xs text-slate-500"><KeyRound size={14} /> Check spam if you don't see it within a minute.</p>
+        <p className="mt-6 flex items-center justify-center gap-2 text-xs text-fg-3"><KeyRound size={14} /> Check spam if you don't see it within a minute.</p>
       </Card>
     </Shell>
   );
@@ -260,9 +260,9 @@ export function Verify() {
 const Legal = ({ title, updated, children }) => (
   <Shell wide>
     <article className="mx-auto max-w-3xl">
-      <h1 className="text-3xl font-semibold text-white">{title}</h1>
-      <p className="mt-1 text-sm text-slate-500">Last updated {updated}. Template text: have counsel review it before launch.</p>
-      <div className="mt-8 space-y-6 text-slate-300 [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-white [&_li]:ml-5 [&_li]:list-disc [&_p]:leading-relaxed">{children}</div>
+      <h1 className="text-3xl font-semibold text-fg">{title}</h1>
+      <p className="mt-1 text-sm text-fg-3">Last updated {updated}. Template text: have counsel review it before launch.</p>
+      <div className="mt-8 space-y-6 text-fg-2 [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-fg [&_li]:ml-5 [&_li]:list-disc [&_p]:leading-relaxed">{children}</div>
     </article>
   </Shell>
 );
@@ -290,9 +290,9 @@ export const Terms = () => (
 export function NotFound() {
   return (
     <Shell>
-      <Card glass className="mt-16 text-center">
-        <h1 className="text-5xl font-semibold text-white">404</h1>
-        <p className="mt-2 text-slate-400">That page doesn't exist.</p>
+      <Card className="mt-16 text-center">
+        <h1 className="text-5xl font-semibold text-fg">404</h1>
+        <p className="mt-2 text-fg-3">That page doesn't exist.</p>
         <Button as={Link} to="/" className="mt-6">Go home</Button>
       </Card>
     </Shell>
@@ -302,10 +302,10 @@ export function NotFound() {
 export function ConfigMissing() {
   return (
     <Shell>
-      <Card glass className="mt-16">
-        <Mail className="mb-3 text-brand-300" />
-        <h1 className="text-xl font-semibold text-white">Firebase isn't configured</h1>
-        <p className="mt-2 text-sm text-slate-400">Copy <code className="rounded bg-ink-700 px-1.5">.env.example</code> to <code className="rounded bg-ink-700 px-1.5">client/.env</code>, fill in the <code className="rounded bg-ink-700 px-1.5">VITE_FIREBASE_*</code> values from your Firebase web app, then restart <code className="rounded bg-ink-700 px-1.5">npm run dev</code>.</p>
+      <Card className="mt-16">
+        <Mail className="mb-3 text-accent-ink" />
+        <h1 className="text-xl font-semibold text-fg">Firebase isn't configured</h1>
+        <p className="mt-2 text-sm text-fg-3">Copy <code className="rounded bg-sunk px-1.5">.env.example</code> to <code className="rounded bg-sunk px-1.5">client/.env</code>, fill in the <code className="rounded bg-sunk px-1.5">VITE_FIREBASE_*</code> values from your Firebase web app, then restart <code className="rounded bg-sunk px-1.5">npm run dev</code>.</p>
       </Card>
     </Shell>
   );

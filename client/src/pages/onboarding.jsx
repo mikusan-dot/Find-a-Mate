@@ -31,8 +31,8 @@ const OptionCards = ({ value, onChange, options, cols = 3 }) => (
   <div className={`grid gap-2 ${cols === 4 ? 'grid-cols-2 sm:grid-cols-4' : cols === 2 ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-3'}`} role="radiogroup">
     {options.map(([id, label, desc]) => (
       <button key={id} type="button" role="radio" aria-checked={value === id} onClick={() => onChange(id)}
-        className={`rounded-xl border p-3 text-left text-sm transition ${value === id ? 'border-brand-400 bg-brand-500/15 text-white' : 'border-line bg-white/[0.02] text-slate-300 hover:bg-white/5'}`}>
-        <span className="block font-medium">{label}</span>{desc && <span className="block text-xs text-slate-400">{desc}</span>}
+        className={`rounded-xl border p-3 text-left text-sm transition ${value === id ? 'border-accent bg-accent-soft text-fg' : 'border-line bg-card text-fg-2 hover:bg-sunk'}`}>
+        <span className="block font-medium">{label}</span>{desc && <span className="block text-xs text-fg-3">{desc}</span>}
       </button>
     ))}
   </div>
@@ -77,7 +77,7 @@ function Basics({ value: d, set, university }) {
           <Button type="button" variant="secondary" size="sm" loading={uploading} onClick={() => fileRef.current?.click()}><Camera size={16} /> {d.photoURL ? 'Change photo' : 'Add photo'}</Button>
           {d.photoURL && <Button type="button" variant="ghost" size="sm" className="ml-2" onClick={() => set({ photoURL: null })}>Remove</Button>}
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={pick} />
-          <p className="mt-1.5 text-xs text-slate-400">Optional. Only shown to people your privacy settings allow.</p>
+          <p className="mt-1.5 text-xs text-fg-3">Optional. Only shown to people your privacy settings allow.</p>
         </div>
       </div>
       <Field label="Display name" htmlFor="dn" hint="Shown to mutual matches by default."><Input id="dn" maxLength={40} value={d.displayName} onChange={(e) => set({ displayName: e.target.value })} /></Field>
@@ -101,7 +101,7 @@ function Personality({ value: d, set }) {
   return (
     <div className="space-y-6">
       {TRAITS.map((t) => <Slider key={t.id} left={t.left} right={t.right} value={d.personality[t.id]} onChange={(v) => set({ personality: { ...d.personality, [t.id]: v } })} />)}
-      <p className="text-xs text-slate-500">There are no right answers. These sliders only help find people whose style fits yours.</p>
+      <p className="text-xs text-fg-3">There are no right answers. These sliders only help find people whose style fits yours.</p>
     </div>
   );
 }
@@ -121,7 +121,7 @@ function Interests({ value: d, set }) {
         <Input placeholder="Add your own…" maxLength={30} value={custom} onChange={(e) => setCustom(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustom())} aria-label="Custom interest" />
         <Button type="button" variant="secondary" onClick={addCustom} aria-label="Add interest"><Plus size={16} /></Button>
       </div>
-      <p className={`text-xs ${d.interests.length >= 3 ? 'text-slate-500' : 'text-amber-300'}`}>{d.interests.length}/15 selected. Pick at least 3.</p>
+      <p className={`text-xs ${d.interests.length >= 3 ? 'text-fg-3' : 'text-warn'}`}>{d.interests.length}/15 selected. Pick at least 3.</p>
     </div>
   );
 }
@@ -138,8 +138,8 @@ function Lifestyle({ value: d, set }) {
       <Slider left="Indoors" right="Outdoors" value={l.indoorOutdoor} onChange={(v) => up({ indoorOutdoor: v })} />
       <Slider left="All work and study" right="All play" value={l.workStudyBalance} onChange={(v) => up({ workStudyBalance: v })} />
       <div className="rounded-xl border border-line p-4">
-        <p className="mb-3 text-sm font-medium text-slate-200">Optional habits <span className="font-normal text-slate-500">(only used for deal-breakers you set, never shown on your profile)</span></p>
-        <div className="space-y-3 text-sm text-slate-300">
+        <p className="mb-3 text-sm font-medium text-fg">Optional habits <span className="font-normal text-fg-3">(only used for deal-breakers you set, never shown on your profile)</span></p>
+        <div className="space-y-3 text-sm text-fg-2">
           <div className="flex items-center justify-between">I smoke <Toggle label="I smoke" checked={l.smokes} onChange={(v) => up({ smokes: v })} /></div>
           <div className="flex items-center justify-between">I drink alcohol <Toggle label="I drink alcohol" checked={l.drinks} onChange={(v) => up({ drinks: v })} /></div>
         </div>
@@ -184,8 +184,8 @@ function GoalsPrefs({ value: d, set }) {
         <Field label="Department" htmlFor="pd"><Select id="pd" value={p.department} onChange={(e) => upP({ department: e.target.value })}><option value="ANY">Any department</option><option value="SAME">Same department</option><option value="DIFFERENT">Different departments</option></Select></Field>
       </div>
       <div className="rounded-xl border border-line p-4">
-        <p className="text-sm font-medium text-slate-200">Deal-breakers <span className="font-normal text-slate-500">(optional, your own preferences)</span></p>
-        <div className="mt-3 space-y-3 text-sm text-slate-300">
+        <p className="text-sm font-medium text-fg">Deal-breakers <span className="font-normal text-fg-3">(optional, your own preferences)</span></p>
+        <div className="mt-3 space-y-3 text-sm text-fg-2">
           {[['smoking', 'Don\'t show me people who smoke'], ['alcohol', 'Don\'t show me people who drink'], ['verySocial', 'Not a very social lifestyle'], ['differentCommFrequency', 'Very different communication frequency']].map(([k, label]) => (
             <div key={k} className="flex items-center justify-between gap-3">{label}<Toggle label={label} checked={db_[k]} onChange={(v) => upD({ [k]: v })} /></div>
           ))}
@@ -239,13 +239,13 @@ export function Onboarding() {
 
   return (
     <div className="mx-auto min-h-screen max-w-2xl px-4 py-6">
-      <div className="mb-6 flex items-center justify-between"><Logo /><span className="text-sm text-slate-400">Step {step + 1} of {SECTIONS.length}</span></div>
+      <div className="mb-6 flex items-center justify-between"><Logo /><span className="text-sm text-fg-3">Step {step + 1} of {SECTIONS.length}</span></div>
       <ProgressBar value={Math.round(((step + 1) / SECTIONS.length) * 100)} className="mb-8" />
       <AnimatePresence mode="wait" custom={dir}>
         <motion.div key={sec.id} initial={{ opacity: 0, x: 24 * dir }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 * dir }} transition={{ duration: 0.2 }}>
-          <h1 className="text-2xl font-semibold text-white">{sec.title}</h1>
-          <p className="mb-6 mt-1 text-sm text-slate-400">{sec.subtitle}</p>
-          <Card glass><sec.Component value={draft} set={(patch) => setDraft((d) => ({ ...d, ...patch }))} university={me.university} /></Card>
+          <h1 className="text-2xl font-semibold text-fg">{sec.title}</h1>
+          <p className="mb-6 mt-1 text-sm text-fg-3">{sec.subtitle}</p>
+          <Card><sec.Component value={draft} set={(patch) => setDraft((d) => ({ ...d, ...patch }))} university={me.university} /></Card>
         </motion.div>
       </AnimatePresence>
       <div className="mt-6 flex justify-between">
